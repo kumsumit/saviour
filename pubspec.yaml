@@ -1,0 +1,98 @@
+name: saviour
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  cupertino_icons: ^1.0.9
+  flutter:
+    sdk: flutter
+  flutter_native_splash: 
+    git: https://github.com/sumitsharansatsangi/flutter_native_splash.git
+  intl: ^0.20.3
+  intl_phone_number_input:
+    git: https://github.com/kumsumit/intl_phone_number_input.git
+  macos_ui:
+    git: https://github.com/kumsumit/macos_ui.git 
+  yaru:
+    git: https://github.com/kumsumit/yaru.dart.git
+  window_manager: ^0.5.2  
+  
+  #State Management
+  hooks_riverpod:
+    git: https://github.com/kumsumit/hooks_riverpod.git
+  riverpod_annotation: 
+    git: https://github.com/kumsumit/riverpod_annotation.git
+
+  catcher:
+    git: https://github.com/sumitsharansatsangi/catcher.git  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  icons_launcher:
+    git: "https://github.com/kumsumit/icons_launcher.git"
+  flutter_lints: ^6.0.0
+  
+  # riverpod  
+  riverpod_generator:
+    git: https://github.com/kumsumit/riverpod_generator.git
+  riverpod_lint:
+    git: https://github.com/kumsumit/riverpod_lint.git
+
+dependency_overrides: 
+  path_provider:
+    git: https://github.com/kumsumit/path_provider.git
+  plugin_platform_interface:
+    git: https://github.com/kumsumit/plugin_platform_interface.git   
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - logo/logo.png
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
+
+
+flutter_native_splash: 
+  color: '#ffffff'
+  color_dark: '#000000'
+  android: true
+  ios: true
+  image_android: 'logo/logo_light.png'
+  image_dark_android: 'logo/logo_dark.png'
+  image_ios: 'logo/logo_light.png'
+  image_dark_ios: 'logo/logo_dark.png'
+  android_gravity: center
+  ios_content_mode: center
+  android_12:
+    color: '#ffffff'
+    color_dark: '#000000'
+    image: 'logo/a12.png'
+    image_dark: 'logo/a12.png'
+
+icons_launcher:
+  image_path: "logo/logo.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
