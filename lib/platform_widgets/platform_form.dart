@@ -275,10 +275,25 @@ class PlatformSlider extends ConsumerWidget {
 
 /// A single selectable item in a [PlatformPicker].
 class PlatformPickerItem<T> {
-  const PlatformPickerItem({required this.value, required this.child});
+  const PlatformPickerItem({
+    required this.value,
+    required this.child,
+    this.label,
+  });
 
   final T value;
   final Widget child;
+
+  /// Plain-text representation used by Material 3's editable dropdown field.
+  /// When omitted, text children and then [value] are used as fallbacks.
+  final String? label;
+
+  String get effectiveLabel {
+    final child = this.child;
+    if (label != null) return label!;
+    if (child is Text && child.data != null) return child.data!;
+    return value.toString();
+  }
 }
 
 /// A compact platform-aware picker for choosing one value.
@@ -347,20 +362,102 @@ class PlatformPicker<T> extends ConsumerWidget {
       AppPlatform.linux ||
       AppPlatform.android ||
       AppPlatform.web ||
-      AppPlatform.fuchsia => material.DropdownButton<T>(
-        items: [
-          for (final item in items)
-            material.DropdownMenuItem<T>(value: item.value, child: item.child),
-        ],
+      AppPlatform.fuchsia => _MaterialPicker<T>(
+        items: items,
         value: value,
-        hint: placeholder,
+        onChanged: onChanged,
+        placeholder: placeholder,
         isExpanded: isExpanded,
         focusNode: focusNode,
         autofocus: autofocus,
         onTap: onTap,
-        onChanged: onChanged,
       ),
     };
+  }
+}
+
+class _MaterialPicker<T> extends StatefulWidget {
+  const _MaterialPicker({
+    required this.items,
+    required this.value,
+    required this.onChanged,
+    required this.placeholder,
+    required this.isExpanded,
+    required this.focusNode,
+    required this.autofocus,
+    required this.onTap,
+  });
+
+  final List<PlatformPickerItem<T>> items;
+  final T? value;
+  final ValueChanged<T?>? onChanged;
+  final Widget? placeholder;
+  final bool isExpanded;
+  final FocusNode? focusNode;
+  final bool autofocus;
+  final VoidCallback? onTap;
+
+  @override
+  State<_MaterialPicker<T>> createState() => _MaterialPickerState<T>();
+}
+
+class _MaterialPickerState<T> extends State<_MaterialPicker<T>> {
+  late FocusNode _focusNode;
+  late bool _ownsFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _setFocusNode();
+    if (widget.autofocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _focusNode.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(_MaterialPicker<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.focusNode != widget.focusNode) {
+      if (_ownsFocusNode) _focusNode.dispose();
+      _setFocusNode();
+    }
+  }
+
+  void _setFocusNode() {
+    _ownsFocusNode = widget.focusNode == null;
+    _focusNode = widget.focusNode ?? FocusNode();
+  }
+
+  @override
+  void dispose() {
+    if (_ownsFocusNode) _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final placeholder = widget.placeholder;
+    return Listener(
+      onPointerDown: widget.onTap == null ? null : (_) => widget.onTap!(),
+      child: material.DropdownMenu<T>(
+        key: ValueKey(widget.value),
+        initialSelection: widget.value,
+        dropdownMenuEntries: [
+          for (final item in widget.items)
+            material.DropdownMenuEntry<T>(
+              value: item.value,
+              label: item.effectiveLabel,
+              labelWidget: item.child,
+            ),
+        ],
+        hintText: placeholder is Text ? placeholder.data : null,
+        expandedInsets: widget.isExpanded ? EdgeInsets.zero : null,
+        focusNode: _focusNode,
+        onSelected: widget.onChanged,
+      ),
+    );
   }
 }
 

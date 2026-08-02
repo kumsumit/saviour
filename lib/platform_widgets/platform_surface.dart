@@ -29,18 +29,49 @@ class PlatformCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = context.platformTheme;
-    // Windows keeps the platform radius a touch tighter on its cards; everyone
-    // else uses the shared surface radius.
-    final radius = ref.watch(appPlatformProvider) == AppPlatform.windows
-        ? theme.controlRadius
-        : theme.surfaceRadius;
-    return GlassSurface(
-      borderRadius: BorderRadius.circular(radius),
-      tint: color,
-      margin: margin,
-      padding: padding,
-      child: child,
-    );
+    final radius = BorderRadius.circular(theme.surfaceRadius);
+
+    return switch (ref.watch(appPlatformProvider)) {
+      AppPlatform.windows => fluent.Card(
+        margin: margin,
+        padding: padding,
+        backgroundColor: color,
+        borderRadius: radius,
+        child: child,
+      ),
+      AppPlatform.linux => yaru.YaruBorderContainer(
+        margin: margin,
+        padding: padding,
+        color: color ?? theme.surfaceContainer,
+        borderRadius: radius,
+        child: child,
+      ),
+      AppPlatform.android ||
+      AppPlatform.web ||
+      AppPlatform.fuchsia => material.Card(
+        margin: margin ?? EdgeInsets.zero,
+        color: color,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: radius),
+        child: Padding(padding: padding, child: child),
+      ),
+      // Cupertino and macos_ui intentionally have no generic card widget.
+      // A quiet system-colored group with a hairline edge matches their
+      // current grouped-content convention without importing Material ink.
+      AppPlatform.ios || AppPlatform.macos => Container(
+        margin: margin,
+        padding: padding,
+        decoration: BoxDecoration(
+          color: color ?? theme.surfaceContainer,
+          borderRadius: radius,
+          border: Border.all(
+            color: theme.outlineVariant,
+            width: ref.watch(appPlatformProvider) == AppPlatform.ios ? 0.5 : 1,
+          ),
+        ),
+        child: child,
+      ),
+    };
   }
 }
 
@@ -90,8 +121,9 @@ class GlassSurface extends StatelessWidget {
     final tintColor = tint ?? theme.surfaceContainer;
     // A light edge gives the surface a faint sheen; dark themes lean on a thin
     // white highlight, lighter themes on a brighter one.
-    final highlight = const Color(0xFFFFFFFF)
-        .withValues(alpha: isDark ? 0.08 : 0.45);
+    final highlight = const Color(
+      0xFFFFFFFF,
+    ).withValues(alpha: isDark ? 0.08 : 0.45);
     double alpha(double base) => (base * opacity).clamp(0.0, 1.0);
     return Container(
       margin: margin,
@@ -110,9 +142,7 @@ class GlassSurface extends StatelessWidget {
                   tintColor.withValues(alpha: alpha(isDark ? 0.48 : 0.58)),
                 ],
               ),
-              border: border
-                  ? Border.all(color: highlight, width: 0.8)
-                  : null,
+              border: border ? Border.all(color: highlight, width: 0.8) : null,
             ),
             child: padding == null
                 ? child

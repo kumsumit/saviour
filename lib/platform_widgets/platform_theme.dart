@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:saviour/providers/app_colors_provider.dart';
 import 'package:saviour/providers/app_platform_provider.dart';
 
-
 class PlatformThemeData {
   const PlatformThemeData({
     required this.brightness,
@@ -62,14 +61,14 @@ class PlatformThemeData {
         AppPlatform.macos => 8,
         AppPlatform.windows => 4,
         AppPlatform.linux => 8,
-        AppPlatform.android || AppPlatform.web || AppPlatform.fuchsia => 18,
+        AppPlatform.android || AppPlatform.web || AppPlatform.fuchsia => 20,
       },
       surfaceRadius: switch (platform) {
         AppPlatform.ios => 16,
         AppPlatform.macos => 10,
         AppPlatform.windows => 4,
         AppPlatform.linux => 8,
-        AppPlatform.android || AppPlatform.web || AppPlatform.fuchsia => 16,
+        AppPlatform.android || AppPlatform.web || AppPlatform.fuchsia => 12,
       },
     );
   }

@@ -87,20 +87,21 @@ class PlatformSearchField extends ConsumerWidget {
       ),
       AppPlatform.android ||
       AppPlatform.web ||
-      AppPlatform.fuchsia => material.TextField(
+      AppPlatform.fuchsia => material.SearchBar(
         controller: controller,
         focusNode: focusNode,
-        autofocus: autofocus,
-        decoration: material.InputDecoration(
-          hintText: placeholder,
-          prefixIcon: const Icon(material.Icons.search),
-          suffixIcon: controller == null || controller!.text.isEmpty
-              ? null
-              : material.IconButton(
+        autoFocus: autofocus,
+        hintText: placeholder,
+        leading: const Icon(material.Icons.search),
+        trailing: controller == null
+            ? null
+            : [
+                material.IconButton(
+                  tooltip: 'Clear search',
                   icon: const Icon(material.Icons.clear),
                   onPressed: _clear,
                 ),
-        ),
+              ],
         onChanged: onChanged,
         onSubmitted: onSubmitted,
       ),

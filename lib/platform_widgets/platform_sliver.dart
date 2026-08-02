@@ -11,10 +11,7 @@ import 'package:saviour/platform_widgets/platform_theme.dart';
 /// A [SliverPersistentHeaderDelegate] that pins a fixed-height child.
 /// Replaces the old `SliverAppBarDelegate` from `custom_sliver_delegate.dart`.
 class PlatformSliverDelegate extends SliverPersistentHeaderDelegate {
-  const PlatformSliverDelegate({
-    required this.child,
-    required this.height,
-  });
+  const PlatformSliverDelegate({required this.child, required this.height});
 
   final Widget child;
   final double height;
@@ -87,12 +84,16 @@ class PlatformDeliveryAppBar extends StatelessWidget {
             Text(
               'DELIVERY IN $location',
               maxLines: 1,
-              style: theme.text.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.text.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Text(
               deliveryTime,
               maxLines: 1,
-              style: theme.text.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.text.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -134,7 +135,11 @@ class PlatformSliverSearchBar extends StatelessWidget {
             child: PlatformTextField(
               controller: controller,
               placeholder: hintText,
-              prefix: Icon(Icons.search, color: theme.onSurfaceVariant, size: 20),
+              prefix: Icon(
+                Icons.search,
+                color: theme.onSurfaceVariant,
+                size: 20,
+              ),
               onChanged: onChanged,
               onSubmitted: onSubmitted,
             ),
@@ -242,8 +247,11 @@ class PlatformHorizontalSection extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Text(
               title,
-              style: titleStyle ??
-                  theme.text.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              style:
+                  titleStyle ??
+                  theme.text.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ),
           SizedBox(

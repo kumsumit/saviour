@@ -4,7 +4,8 @@ import 'package:saviour/platform_widgets/platform_button.dart';
 import 'package:saviour/platform_widgets/platform_theme.dart';
 import 'package:flutter/material.dart';
 
-export 'package:saviour/platform_widgets/platform_button.dart' show PlatformButtonKind;
+export 'package:saviour/platform_widgets/platform_button.dart'
+    show PlatformButtonKind;
 
 enum _OtpTimerState { countdown, ready, loading }
 
@@ -25,8 +26,7 @@ class PlatformOtpTimerButton extends StatefulWidget {
   final PlatformOtpTimerButtonController? controller;
 
   @override
-  State<PlatformOtpTimerButton> createState() =>
-      _PlatformOtpTimerButtonState();
+  State<PlatformOtpTimerButton> createState() => _PlatformOtpTimerButtonState();
 }
 
 class _PlatformOtpTimerButtonState extends State<PlatformOtpTimerButton> {
@@ -69,40 +69,40 @@ class _PlatformOtpTimerButtonState extends State<PlatformOtpTimerButton> {
     final theme = context.platformTheme;
     return switch (_state) {
       _OtpTimerState.countdown => PlatformButton(
-          kind: widget.kind,
-          onPressed: null,
-          child: Text(
-            '${widget.label}  $_counter s',
-            style: TextStyle(color: theme.onSurfaceVariant),
-          ),
+        kind: widget.kind,
+        onPressed: null,
+        child: Text(
+          '${widget.label}  $_counter s',
+          style: TextStyle(color: theme.onSurfaceVariant),
         ),
+      ),
       _OtpTimerState.loading => PlatformButton(
-          kind: widget.kind,
-          onPressed: null,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(widget.label),
-              const SizedBox(width: 8),
-              SizedBox(
-                width: 14,
-                height: 14,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: theme.primary,
-                ),
+        kind: widget.kind,
+        onPressed: null,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(widget.label),
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: theme.primary,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
       _OtpTimerState.ready => PlatformButton(
-          kind: widget.kind,
-          onPressed: () {
-            widget.onPressed();
-            if (widget.controller == null) _startTimer();
-          },
-          child: Text(widget.label),
-        ),
+        kind: widget.kind,
+        onPressed: () {
+          widget.onPressed();
+          if (widget.controller == null) _startTimer();
+        },
+        child: Text(widget.label),
+      ),
     };
   }
 }

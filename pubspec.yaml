@@ -9,6 +9,8 @@ environment:
 
 dependencies:
   cupertino_icons: ^1.0.9
+  fluent_ui:
+    git: https://github.com/kumsumit/fluent_ui.git
   flutter:
     sdk: flutter
   flutter_native_splash: 

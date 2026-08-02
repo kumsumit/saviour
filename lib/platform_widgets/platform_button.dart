@@ -14,7 +14,7 @@ enum PlatformButtonKind { primary, outlined, text }
 ///
 /// Renders the native button for each platform — `CupertinoButton` on iOS,
 /// macos `PushButton`, fluent `FilledButton` / `Button` / `HyperlinkButton`, and
-/// Material `ElevatedButton` / `OutlinedButton` / `TextButton` (also used for
+/// Material 3 `FilledButton` / `OutlinedButton` / `TextButton` (also used for
 /// Linux) — selected by [kind] (primary / outlined / text).
 class PlatformButton extends ConsumerWidget {
   const PlatformButton({
@@ -176,10 +176,9 @@ class PlatformButton extends ConsumerWidget {
               ),
       AppPlatform.android || AppPlatform.web || AppPlatform.fuchsia =>
         isPrimary
-            ? material.ElevatedButton(
+            ? material.FilledButton(
                 onPressed: onPressed,
-                style: material.ElevatedButton.styleFrom(
-                  elevation: 0,
+                style: material.FilledButton.styleFrom(
                   backgroundColor: accent,
                   foregroundColor: onAccent,
                   padding: padding,

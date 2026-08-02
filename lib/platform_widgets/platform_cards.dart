@@ -160,13 +160,17 @@ class PlatformAddressCard extends StatelessWidget {
             ),
             title: Text(
               type,
-              style: theme.text.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.text.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             subtitle: Text(
               address,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: theme.text.bodySmall?.copyWith(color: theme.onSurfaceVariant),
+              style: theme.text.bodySmall?.copyWith(
+                color: theme.onSurfaceVariant,
+              ),
             ),
           ),
           if (onEdit != null || onDelete != null) ...[
@@ -226,7 +230,9 @@ class PlatformAddAddressCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: theme.text.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.text.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -259,12 +265,16 @@ class PlatformInfoCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: theme.text.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.text.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             body,
-            style: theme.text.bodySmall?.copyWith(color: theme.onSurfaceVariant),
+            style: theme.text.bodySmall?.copyWith(
+              color: theme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

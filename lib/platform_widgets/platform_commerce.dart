@@ -49,7 +49,11 @@ class PlatformQuantityStepper extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _StepIcon(icon: Icons.remove, onTap: onDecrement, color: theme.onPrimary),
+          _StepIcon(
+            icon: Icons.remove,
+            onTap: onDecrement,
+            color: theme.onPrimary,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
@@ -57,7 +61,11 @@ class PlatformQuantityStepper extends StatelessWidget {
               style: theme.text.labelLarge?.copyWith(color: theme.onPrimary),
             ),
           ),
-          _StepIcon(icon: Icons.add, onTap: onIncrement, color: theme.onPrimary),
+          _StepIcon(
+            icon: Icons.add,
+            onTap: onIncrement,
+            color: theme.onPrimary,
+          ),
         ],
       ),
     );
@@ -65,7 +73,11 @@ class PlatformQuantityStepper extends StatelessWidget {
 }
 
 class _StepIcon extends StatelessWidget {
-  const _StepIcon({required this.icon, required this.onTap, required this.color});
+  const _StepIcon({
+    required this.icon,
+    required this.onTap,
+    required this.color,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
@@ -126,18 +138,26 @@ class PlatformProductCard extends StatelessWidget {
               name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: theme.text.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.text.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Text(
               unit,
               maxLines: 1,
-              style: theme.text.bodySmall?.copyWith(color: theme.onSurfaceVariant),
+              style: theme.text.bodySmall?.copyWith(
+                color: theme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _PriceLabel(price: price, originalPrice: originalPrice, theme: theme),
+                _PriceLabel(
+                  price: price,
+                  originalPrice: originalPrice,
+                  theme: theme,
+                ),
                 PlatformAddToCartButton(onTap: onAddToCart),
               ],
             ),
@@ -250,7 +270,9 @@ class PlatformCartItem extends StatelessWidget {
         children: [
           Text(
             unit,
-            style: theme.text.bodySmall?.copyWith(color: theme.onSurfaceVariant),
+            style: theme.text.bodySmall?.copyWith(
+              color: theme.onSurfaceVariant,
+            ),
           ),
           Text(
             price,
@@ -295,7 +317,9 @@ class PlatformCategoryTile extends StatelessWidget {
             decoration: BoxDecoration(
               color: theme.surfaceContainer,
               borderRadius: BorderRadius.circular(theme.controlRadius),
-              border: selected ? Border.all(color: theme.primary, width: 2) : null,
+              border: selected
+                  ? Border.all(color: theme.primary, width: 2)
+                  : null,
             ),
             child: Image.asset(imagePath, fit: BoxFit.cover),
           ),
@@ -339,7 +363,10 @@ class PlatformPriceRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [Text(label, style: style), Text(value, style: style)],
+        children: [
+          Text(label, style: style),
+          Text(value, style: style),
+        ],
       ),
     );
   }
