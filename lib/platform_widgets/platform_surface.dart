@@ -83,7 +83,7 @@ class PlatformCard extends ConsumerWidget {
 /// feel at home next to the native platform widgets. Reused across the app's
 /// container surfaces (cards, bars, banners) so the glass treatment stays
 /// consistent — tune [blurSigma] / [opacity] for a stronger or fainter pane.
-class GlassSurface extends StatelessWidget {
+class GlassSurface extends ConsumerWidget {
   const GlassSurface({
     super.key,
     required this.child,
@@ -115,10 +115,28 @@ class GlassSurface extends StatelessWidget {
   final bool border;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = context.platformTheme;
     final isDark = theme.isDark;
     final tintColor = tint ?? theme.surfaceContainer;
+    if (ref.watch(appPlatformProvider) == AppPlatform.macos) {
+      return Container(
+        margin: margin,
+        child: macos.MacosLiquidGlass(
+          borderRadius: borderRadius,
+          style: opacity >= 1
+              ? macos.MacosLiquidGlassStyle.prominent
+              : macos.MacosLiquidGlassStyle.regular,
+          color: tint,
+          borderColor: border ? null : const Color(0x00000000),
+          boxShadow: border ? null : const [],
+          child: padding == null
+              ? child
+              : Padding(padding: padding!, child: child),
+        ),
+      );
+    }
+
     // A light edge gives the surface a faint sheen; dark themes lean on a thin
     // white highlight, lighter themes on a brighter one.
     final highlight = const Color(

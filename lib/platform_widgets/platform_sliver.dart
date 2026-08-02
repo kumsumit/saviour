@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart'
-    show IconButton, Icons, SliverAppBar, kToolbarHeight;
+    show
+        CarouselView,
+        IconButton,
+        Icons,
+        RoundedRectangleBorder,
+        SliverAppBar,
+        kToolbarHeight;
 import 'package:flutter/widgets.dart';
-import 'package:saviour/platform_widgets/platform_form.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:saviour/platform_widgets/platform_controls.dart';
 import 'package:saviour/platform_widgets/platform_theme.dart';
+import 'package:saviour/providers/app_platform_provider.dart';
+import 'package:yaru/yaru.dart' as yaru;
 
 // ---------------------------------------------------------------------------
 // Sliver utilities
@@ -102,7 +111,7 @@ class PlatformDeliveryAppBar extends StatelessWidget {
   }
 }
 
-/// A pinned sliver search bar — wraps [PlatformTextField] in a
+/// A pinned sliver search bar — wraps [PlatformSearchField] in a
 /// [SliverPersistentHeader] so it sticks below the app bar while scrolling.
 class PlatformSliverSearchBar extends StatelessWidget {
   const PlatformSliverSearchBar({
@@ -130,16 +139,10 @@ class PlatformSliverSearchBar extends StatelessWidget {
         child: ColoredBox(
           color: theme.surface,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            // Reuses PlatformTextField so the input field is native on each platform.
-            child: PlatformTextField(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: PlatformSearchField(
               controller: controller,
               placeholder: hintText,
-              prefix: Icon(
-                Icons.search,
-                color: theme.onSurfaceVariant,
-                size: 20,
-              ),
               onChanged: onChanged,
               onSubmitted: onSubmitted,
             ),
@@ -154,7 +157,7 @@ class PlatformSliverSearchBar extends StatelessWidget {
 ///
 /// Typical use: pass [itemBuilder] returning `Image.asset` or `Image.network`
 /// items. The carousel uses natural page physics.
-class PlatformBannerCarousel extends StatelessWidget {
+class PlatformBannerCarousel extends ConsumerWidget {
   const PlatformBannerCarousel({
     super.key,
     required this.itemCount,
@@ -169,23 +172,57 @@ class PlatformBannerCarousel extends StatelessWidget {
   final EdgeInsetsGeometry itemMargin;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = context.platformTheme;
     return SliverToBoxAdapter(
       child: SizedBox(
         height: height,
-        child: PageView.builder(
-          itemCount: itemCount,
-          itemBuilder: (context, index) => Container(
-            margin: itemMargin,
-            decoration: BoxDecoration(
-              color: theme.surfaceContainer,
+        child: switch (ref.watch(appPlatformProvider)) {
+          AppPlatform.linux => yaru.YaruCarousel(
+            height: height,
+            width: double.infinity,
+            navigationControls: true,
+            children: [
+              for (var index = 0; index < itemCount; index++)
+                Padding(
+                  padding: itemMargin,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(theme.surfaceRadius),
+                    child: itemBuilder(context, index),
+                  ),
+                ),
+            ],
+          ),
+          AppPlatform.android ||
+          AppPlatform.web ||
+          AppPlatform.fuchsia => CarouselView.weightedBuilder(
+            flexWeights: const [1],
+            itemCount: itemCount,
+            itemSnapping: true,
+            itemClipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(theme.surfaceRadius),
             ),
-            clipBehavior: Clip.antiAlias,
-            child: itemBuilder(context, index),
+            itemBuilder: (context, index) => Padding(
+              padding: itemMargin,
+              child: itemBuilder(context, index),
+            ),
           ),
-        ),
+          AppPlatform.ios ||
+          AppPlatform.macos ||
+          AppPlatform.windows => PageView.builder(
+            itemCount: itemCount,
+            itemBuilder: (context, index) => Container(
+              margin: itemMargin,
+              decoration: BoxDecoration(
+                color: theme.surfaceContainer,
+                borderRadius: BorderRadius.circular(theme.surfaceRadius),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: itemBuilder(context, index),
+            ),
+          ),
+        },
       ),
     );
   }

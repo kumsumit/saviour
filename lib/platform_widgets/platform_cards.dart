@@ -1,9 +1,13 @@
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart' show Divider, Icons;
 import 'package:flutter/widgets.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:saviour/platform_widgets/platform_button.dart';
 import 'package:saviour/platform_widgets/platform_list.dart';
 import 'package:saviour/platform_widgets/platform_surface.dart';
 import 'package:saviour/platform_widgets/platform_theme.dart';
+import 'package:saviour/providers/app_platform_provider.dart';
+import 'package:yaru/yaru.dart' as yaru;
 
 /// A tappable card row: icon + title/subtitle + optional trailing widget.
 ///
@@ -243,7 +247,7 @@ class PlatformAddAddressCard extends StatelessWidget {
 
 /// A static info card — title headline above a body paragraph.
 /// Covers: cancellation policy, order notes, and similar read-only blocks.
-class PlatformInfoCard extends StatelessWidget {
+class PlatformInfoCard extends ConsumerWidget {
   const PlatformInfoCard({
     super.key,
     required this.title,
@@ -256,29 +260,48 @@ class PlatformInfoCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = context.platformTheme;
-    return PlatformCard(
-      margin: margin ?? const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: theme.text.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            body,
-            style: theme.text.bodySmall?.copyWith(
-              color: theme.onSurfaceVariant,
-            ),
-          ),
-        ],
+    final effectiveMargin = margin ?? const EdgeInsets.symmetric(vertical: 8);
+    final content = switch (ref.watch(appPlatformProvider)) {
+      AppPlatform.windows => fluent.InfoBar.info(
+        title: Text(title),
+        content: Text(body),
+        isLong: true,
+        onClose: null,
       ),
-    );
+      AppPlatform.linux => yaru.YaruInfoBox(
+        title: Text(title),
+        subtitle: Text(body),
+        yaruInfoType: yaru.YaruInfoType.information,
+      ),
+      AppPlatform.ios ||
+      AppPlatform.macos ||
+      AppPlatform.android ||
+      AppPlatform.web ||
+      AppPlatform.fuchsia => PlatformCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: theme.text.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              body,
+              style: theme.text.bodySmall?.copyWith(
+                color: theme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    };
+
+    return Padding(padding: effectiveMargin, child: content);
   }
 }
 

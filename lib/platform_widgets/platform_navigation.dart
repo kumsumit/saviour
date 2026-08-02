@@ -47,7 +47,7 @@ class PlatformNavigationItem {
 ///   body: pages[index],
 /// )
 /// ```
-class PlatformNavigation extends StatelessWidget {
+class PlatformNavigation extends ConsumerWidget {
   const PlatformNavigation({
     super.key,
     required this.items,
@@ -89,7 +89,32 @@ class PlatformNavigation extends StatelessWidget {
   final double extendedBreakpoint;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(appPlatformProvider) == AppPlatform.windows) {
+      return fluent.NavigationView(
+        pane: fluent.NavigationPane(
+          selected: selectedIndex,
+          onChanged: onSelected,
+          displayMode: fluent.PaneDisplayMode.auto,
+          header: header,
+          items: [
+            for (final item in items)
+              fluent.PaneItem(
+                icon: Icon(item.icon),
+                title: Text(item.label),
+                body: body,
+              ),
+          ],
+          footerItems: [
+            if (footer != null) fluent.PaneItemWidgetAdapter(child: footer!),
+          ],
+        ),
+        // The caller owns page state; NavigationView owns only the adaptive
+        // Fluent navigation chrome and its compact/minimal breakpoints.
+        paneBodyBuilder: (_, _) => body,
+      );
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
@@ -133,8 +158,7 @@ class PlatformNavigation extends StatelessWidget {
 ///
 /// Renders the native rail for each platform — macOS `SidebarItems`, Yaru's
 /// `YaruNavigationRail`, Material `NavigationRail` — and a platform-styled
-/// custom column on Windows (Fluent accent bar) and iOS (highlighted list),
-/// where the UI kits don't ship a standalone rail.
+/// custom highlighted list on iOS, where Cupertino has no standalone rail.
 class PlatformSidebar extends ConsumerWidget {
   const PlatformSidebar({
     super.key,
@@ -173,6 +197,8 @@ class PlatformSidebar extends ConsumerWidget {
     return switch (ref.watch(appPlatformProvider)) {
       AppPlatform.macos => _buildMacos(context),
       AppPlatform.linux => _buildYaru(context),
+      // Standalone sidebars can still be requested directly. The full
+      // PlatformNavigation composition uses Fluent NavigationView instead.
       AppPlatform.windows => _buildCustom(context, showAccentBar: true),
       AppPlatform.ios => _buildCustom(context, showAccentBar: false),
       AppPlatform.android ||
