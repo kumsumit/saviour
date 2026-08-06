@@ -23,6 +23,44 @@ ScrollPhysics platformScrollPhysicsFor(AppPlatform platform) {
   };
 }
 
+class PlatformSingleChildScrollView extends StatelessWidget {
+  const PlatformSingleChildScrollView({
+    super.key,
+    required this.child,
+    this.scrollDirection = Axis.vertical,
+    this.reverse = false,
+    this.padding,
+    this.primary,
+    this.controller,
+    this.physics,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    this.clipBehavior = Clip.hardEdge,
+  });
+
+  final Widget child;
+  final Axis scrollDirection;
+  final bool reverse;
+  final EdgeInsetsGeometry? padding;
+  final bool? primary;
+  final ScrollController? controller;
+  final ScrollPhysics? physics;
+  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+  final Clip clipBehavior;
+
+  @override
+  Widget build(BuildContext context) => SingleChildScrollView(
+    scrollDirection: scrollDirection,
+    reverse: reverse,
+    padding: padding,
+    primary: primary,
+    controller: controller,
+    physics: physics ?? platformScrollPhysics(context),
+    keyboardDismissBehavior: keyboardDismissBehavior,
+    clipBehavior: clipBehavior,
+    child: child,
+  );
+}
+
 /// Adds the current platform's native scrollbar around [child].
 ///
 /// Android and Fuchsia rely on their native transient scroll affordances, so

@@ -1,26 +1,11 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_scroll.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
+import 'package:saviour/platform_widgets/platform_dropdown.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const VitalReserveApp());
-}
-
-class VitalReserveApp extends StatelessWidget {
-  const VitalReserveApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vital Reserve',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-        useMaterial3: true,
-      ),
-      home: const CompleteProfileScreen(),
-    );
-  }
-}
+import 'package:saviour/features/home/feature_actions.dart';
+import 'package:saviour/platform_widgets/platform_overlay.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
   const CompleteProfileScreen({super.key});
@@ -30,9 +15,9 @@ class CompleteProfileScreen extends StatefulWidget {
 }
 
 class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
-  static const Color primaryRed = Color(0xFFB71C1C);
-  static const Color navyBlue = Color(0xFF1B3A57);
-  static const Color travelBlue = Color(0xFF1565C0);
+  static const Color primaryRed = SaviourPalette.shade800;
+  static const Color navyBlue = SaviourPalette.shade800;
+  static const Color travelBlue = SaviourPalette.shade700;
 
   String _currentStatus = 'Available';
   String _notificationPreference = 'Instant Alerts (Urgent Only)';
@@ -64,8 +49,9 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   }
 
   Future<void> _pickDate({required bool isFrom}) async {
-    final picked = await showDatePicker(
+    final picked = await showPlatformDatePicker(
       context: context,
+      platform: FeatureActions.platformOf(context),
       initialDate: DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
@@ -88,11 +74,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       appBar: _buildAppBar(),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: PlatformSingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +89,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: SaviourPalette.shade950,
                 ),
               ),
               const SizedBox(height: 10),
@@ -111,7 +97,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                 'Complete your registration to join the Vital Reserve network and start saving lives through smart blood donations.',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.black54,
+                  color: SaviourPalette.shade800,
                   height: 1.4,
                 ),
               ),
@@ -137,12 +123,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   }
 
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
+    return NativeAppBar(
+      backgroundColor: SaviourPalette.shade50,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black87),
-        onPressed: () {},
+      leading: NativeIconButton(
+        icon: const Icon(Icons.arrow_back, color: SaviourPalette.shade950),
+        onPressed: () => Navigator.of(context).maybePop(),
       ),
       title: const Text(
         'Complete Profile',
@@ -156,23 +142,27 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       actions: const [
         Padding(
           padding: EdgeInsets.only(right: 16.0),
-          child: Icon(Icons.notifications_none, color: Colors.black87),
+          child: Icon(Icons.notifications_none, color: SaviourPalette.shade950),
         ),
       ],
     );
   }
 
-  Widget _buildCard({required Widget child, Color? borderColor, Color? bgColor}) {
+  Widget _buildCard({
+    required Widget child,
+    Color? borderColor,
+    Color? bgColor,
+  }) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: bgColor ?? Colors.white,
+        color: bgColor ?? SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor ?? const Color(0xFFE5E5E5)),
+        border: Border.all(color: borderColor ?? SaviourPalette.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: SaviourPalette.shade950.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -205,7 +195,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 13, color: Colors.black87),
+        style: const TextStyle(fontSize: 13, color: SaviourPalette.shade950),
       ),
     );
   }
@@ -219,18 +209,15 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFE0B4B4)),
+        border: Border.all(color: SaviourPalette.shade300),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: value,
-          isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down),
-          items: items
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-              .toList(),
-          onChanged: onChanged,
-        ),
+      child: PlatformDropdown<String>(
+        value: value,
+        isExpanded: true,
+        items: items
+            .map((item) => PlatformDropdownItem(value: item, child: Text(item)))
+            .toList(),
+        onChanged: onChanged,
       ),
     );
   }
@@ -240,7 +227,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionHeader(Icons.event_note_outlined, 'DONATION AVAILABILITY', navyBlue),
+          _sectionHeader(
+            Icons.event_note_outlined,
+            'DONATION AVAILABILITY',
+            navyBlue,
+          ),
           const SizedBox(height: 16),
           _fieldLabel('Current Status'),
           _buildDropdown(
@@ -268,7 +259,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   Widget _buildTravelDonorCard() {
     return _buildCard(
       borderColor: travelBlue.withValues(alpha: 0.4),
-      bgColor: const Color(0xFFEFF6FC),
+      bgColor: SaviourPalette.shade100,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -276,13 +267,16 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             children: [
               Expanded(
                 child: _sectionHeader(
-                    Icons.flight_takeoff, 'TRAVEL DONOR\nPROGRAM', travelBlue),
+                  Icons.flight_takeoff,
+                  'TRAVEL DONOR\nPROGRAM',
+                  travelBlue,
+                ),
               ),
               const Text('Enable', style: TextStyle(fontSize: 13)),
               const SizedBox(width: 8),
-              Switch(
+              NativeSwitch(
                 value: _travelDonorEnabled,
-                activeThumbColor: Colors.white,
+                activeThumbColor: SaviourPalette.shade50,
                 activeTrackColor: travelBlue,
                 onChanged: (val) => setState(() => _travelDonorEnabled = val),
               ),
@@ -291,11 +285,15 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           const SizedBox(height: 10),
           const Text(
             'Planning a trip? Mark yourself as available in another city to receive local donation requests while traveling.',
-            style: TextStyle(fontSize: 13, color: Colors.black54, height: 1.4),
+            style: TextStyle(
+              fontSize: 13,
+              color: SaviourPalette.shade800,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 16),
           _fieldLabel('Destination City'),
-          TextField(
+          NativeTextField(
             controller: _destinationController,
             decoration: _inputDecoration('e.g. New York, NY'),
           ),
@@ -318,14 +316,14 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   Widget _buildDateField({required bool isFrom}) {
     final date = isFrom ? _fromDate : _toDate;
-    return InkWell(
+    return PlatformGestureSurface(
       onTap: () => _pickDate(isFrom: isFrom),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: SaviourPalette.shade50,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFFE0B4B4)),
+          border: Border.all(color: SaviourPalette.shade300),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -334,10 +332,16 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               _formatDate(date),
               style: TextStyle(
                 fontSize: 13,
-                color: date == null ? Colors.black38 : Colors.black87,
+                color: date == null
+                    ? SaviourPalette.shade600
+                    : SaviourPalette.shade950,
               ),
             ),
-            const Icon(Icons.calendar_today_outlined, size: 16, color: Colors.black45),
+            const Icon(
+              Icons.calendar_today_outlined,
+              size: 16,
+              color: SaviourPalette.shade700,
+            ),
           ],
         ),
       ),
@@ -349,10 +353,14 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionHeader(Icons.medical_services_outlined, 'MEDICAL RESTRICTIONS', primaryRed),
+          _sectionHeader(
+            Icons.medical_services_outlined,
+            'MEDICAL RESTRICTIONS',
+            primaryRed,
+          ),
           const SizedBox(height: 16),
           _fieldLabel('Existing Conditions or Medications'),
-          TextField(
+          NativeTextField(
             controller: _medicalNotesController,
             maxLines: 3,
             decoration: _inputDecoration(
@@ -360,28 +368,41 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          _buildCheckboxChip('Iron Deficiency History', _ironDeficiency,
-              (val) => setState(() => _ironDeficiency = val!)),
+          _buildCheckboxChip(
+            'Iron Deficiency History',
+            _ironDeficiency,
+            (val) => setState(() => _ironDeficiency = val!),
+          ),
           const SizedBox(height: 10),
-          _buildCheckboxChip('Recent Tattoo/Piercing', _recentTattoo,
-              (val) => setState(() => _recentTattoo = val!)),
+          _buildCheckboxChip(
+            'Recent Tattoo/Piercing',
+            _recentTattoo,
+            (val) => setState(() => _recentTattoo = val!),
+          ),
           const SizedBox(height: 10),
-          _buildCheckboxChip('International Travel (Last 6mo)', _internationalTravel,
-              (val) => setState(() => _internationalTravel = val!)),
+          _buildCheckboxChip(
+            'International Travel (Last 6mo)',
+            _internationalTravel,
+            (val) => setState(() => _internationalTravel = val!),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildCheckboxChip(String label, bool value, ValueChanged<bool?> onChanged) {
-    return InkWell(
+  Widget _buildCheckboxChip(
+    String label,
+    bool value,
+    ValueChanged<bool?> onChanged,
+  ) {
+    return PlatformGestureSurface(
       onTap: () => onChanged(!value),
       borderRadius: BorderRadius.circular(24),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: const Color(0xFFE0B4B4)),
+          border: Border.all(color: SaviourPalette.shade300),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -389,7 +410,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             SizedBox(
               width: 18,
               height: 18,
-              child: Checkbox(
+              child: NativeCheckbox(
                 value: value,
                 onChanged: onChanged,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -412,16 +433,20 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionHeader(Icons.contact_emergency_outlined, 'EMERGENCY CONTACT', navyBlue),
+          _sectionHeader(
+            Icons.contact_emergency_outlined,
+            'EMERGENCY CONTACT',
+            navyBlue,
+          ),
           const SizedBox(height: 16),
           _fieldLabel('Full Name'),
-          TextField(
+          NativeTextField(
             controller: _contactNameController,
             decoration: _inputDecoration('Contact Person Name'),
           ),
           const SizedBox(height: 16),
           _fieldLabel('Relationship'),
-          TextField(
+          NativeTextField(
             controller: _relationshipController,
             decoration: _inputDecoration('e.g. Spouse, Parent'),
           ),
@@ -430,16 +455,19 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFE0B4B4)),
+                  border: Border.all(color: SaviourPalette.shade300),
                 ),
                 child: const Icon(Icons.keyboard_arrow_down, size: 18),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: TextField(
+                child: NativeTextField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   decoration: _inputDecoration('(555) 000-0000'),
@@ -455,15 +483,15 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.black38, fontSize: 13),
+      hintStyle: const TextStyle(color: SaviourPalette.shade600, fontSize: 13),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0B4B4)),
+        borderSide: const BorderSide(color: SaviourPalette.shade300),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0B4B4)),
+        borderSide: const BorderSide(color: SaviourPalette.shade300),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -475,9 +503,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   Widget _buildSaveButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
+      child: NativeElevatedButton(
+        onPressed: () {
+          FeatureActions.notice(context, 'Your donor profile has been saved.');
+          Navigator.of(context).maybePop();
+        },
+        style: NativeElevatedButton.styleFrom(
           backgroundColor: primaryRed,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
@@ -488,7 +519,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         child: const Text(
           'Save and Complete Profile',
           style: TextStyle(
-            color: Colors.white,
+            color: SaviourPalette.shade50,
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),
@@ -499,14 +530,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   Widget _buildSkipButton() {
     return Center(
-      child: TextButton(
-        onPressed: () {},
+      child: NativeTextButton(
+        onPressed: () => Navigator.of(context).maybePop(),
         child: const Text(
           'Skip for Now',
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: SaviourPalette.shade800, fontSize: 14),
         ),
       ),
     );
@@ -514,12 +542,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   Widget _buildBottomNavBar() {
     const primaryRedLocal = primaryRed;
-    return BottomNavigationBar(
+    return NativeBottomNavigationBar(
       currentIndex: _currentNavIndex,
       onTap: (index) => setState(() => _currentNavIndex = index),
       type: BottomNavigationBarType.fixed,
       selectedItemColor: primaryRedLocal,
-      unselectedItemColor: Colors.black54,
+      unselectedItemColor: SaviourPalette.shade800,
       showUnselectedLabels: true,
       items: [
         const BottomNavigationBarItem(
@@ -541,7 +569,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               color: primaryRedLocal,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.person, color: Colors.white, size: 20),
+            child: const Icon(
+              Icons.person,
+              color: SaviourPalette.shade50,
+              size: 20,
+            ),
           ),
           label: 'Profile',
         ),

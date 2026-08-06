@@ -1,4 +1,8 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_scroll.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
+import 'package:saviour/features/home/feature_actions.dart';
 
 /// Vital Reserve — Emergency Blood Request Screen
 /// A single-file Flutter recreation of the "Vital Reserve" UI.
@@ -7,31 +11,19 @@ import 'package:flutter/material.dart';
 /// and push it with:
 ///   Navigator.push(context, MaterialPageRoute(builder: (_) => const VitalReserveScreen()));
 
-class AppColors {
-  static const Color primaryRed = Color(0xFFB91C3C);
-  static const Color darkRed = Color(0xFF8E1030);
-  static const Color background = Color(0xFFF7F7F9);
-  static const Color cardBackground = Colors.white;
-  static const Color textDark = Color(0xFF1A1A1A);
-  static const Color textGrey = Color(0xFF6B6B6B);
-  static const Color mapTeal = Color(0xFF2E6B75);
-  static const Color chipPink = Color(0xFFFBE1E6);
-  static const Color checkBlue = Color(0xFF2F6FE0);
-}
-
 class VitalReserveScreen extends StatelessWidget {
   const VitalReserveScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    return NativeScaffold(
+      backgroundColor: SaviourPalette.shade50,
       appBar: _buildAppBar(context),
       body: SafeArea(
         top: false,
         child: Stack(
           children: [
-            SingleChildScrollView(
+            PlatformSingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 110),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,26 +53,32 @@ class VitalReserveScreen extends StatelessWidget {
   // -------------------- App Bar --------------------
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: AppColors.background,
+    return NativeAppBar(
+      backgroundColor: SaviourPalette.shade50,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: AppColors.primaryRed),
+      leading: NativeIconButton(
+        icon: const Icon(Icons.arrow_back, color: SaviourPalette.shade800),
         onPressed: () => Navigator.of(context).maybePop(),
       ),
       title: const Text(
         'Vital Reserve',
         style: TextStyle(
-          color: AppColors.primaryRed,
+          color: SaviourPalette.shade800,
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
       ),
       centerTitle: true,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.share_outlined, color: AppColors.textDark),
-          onPressed: () {},
+        NativeIconButton(
+          icon: const Icon(
+            Icons.share_outlined,
+            color: SaviourPalette.shade950,
+          ),
+          onPressed: () => FeatureActions.notice(
+            context,
+            'A privacy-safe request summary is ready to share.',
+          ),
         ),
       ],
     );
@@ -93,7 +91,7 @@ class VitalReserveScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: Container(
         height: 260,
-        color: AppColors.mapTeal,
+        color: SaviourPalette.shade600,
         child: Stack(
           children: [
             // Placeholder for the actual map preview / image.
@@ -103,13 +101,20 @@ class VitalReserveScreen extends StatelessWidget {
                 child: Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF2E6B75), Color(0xFF1F4A52)],
+                      colors: [
+                        SaviourPalette.shade600,
+                        SaviourPalette.shade800,
+                      ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                   ),
                   child: const Center(
-                    child: Icon(Icons.map_outlined, size: 64, color: Colors.white24),
+                    child: Icon(
+                      Icons.map_outlined,
+                      size: 64,
+                      color: SaviourPalette.shade200,
+                    ),
                   ),
                 ),
               ),
@@ -122,7 +127,7 @@ class VitalReserveScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.95),
+                  color: SaviourPalette.shade50.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -135,7 +140,7 @@ class VitalReserveScreen extends StatelessWidget {
                           Text(
                             'DESTINATION',
                             style: TextStyle(
-                              color: AppColors.primaryRed,
+                              color: SaviourPalette.shade800,
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                               letterSpacing: 0.5,
@@ -145,7 +150,7 @@ class VitalReserveScreen extends StatelessWidget {
                           Text(
                             'City General',
                             style: TextStyle(
-                              color: AppColors.textDark,
+                              color: SaviourPalette.shade950,
                               fontWeight: FontWeight.bold,
                               fontSize: 22,
                             ),
@@ -154,20 +159,27 @@ class VitalReserveScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryRed,
+                        color: SaviourPalette.shade800,
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.navigation, color: Colors.white, size: 16),
+                          Icon(
+                            Icons.navigation,
+                            color: SaviourPalette.shade50,
+                            size: 16,
+                          ),
                           SizedBox(width: 6),
                           Text(
                             '0.8 miles',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: SaviourPalette.shade50,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
@@ -194,17 +206,24 @@ class VitalReserveScreen extends StatelessWidget {
           child: _InfoCard(
             child: Column(
               children: [
-                const Icon(Icons.bloodtype, color: AppColors.primaryRed, size: 32),
+                const Icon(
+                  Icons.bloodtype,
+                  color: SaviourPalette.shade800,
+                  size: 32,
+                ),
                 const SizedBox(height: 8),
                 const Text(
                   'Blood Type Needed',
-                  style: TextStyle(color: AppColors.textGrey, fontSize: 13),
+                  style: TextStyle(
+                    color: SaviourPalette.shade600,
+                    fontSize: 13,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'O-',
                   style: TextStyle(
-                    color: AppColors.primaryRed,
+                    color: SaviourPalette.shade800,
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
@@ -219,15 +238,18 @@ class VitalReserveScreen extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: AppColors.chipPink,
+                    color: SaviourPalette.shade200,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Text(
                     'CRITICAL NEED',
                     style: TextStyle(
-                      color: AppColors.primaryRed,
+                      color: SaviourPalette.shade800,
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
                     ),
@@ -236,13 +258,16 @@ class VitalReserveScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text(
                   'Urgency Level',
-                  style: TextStyle(color: AppColors.textGrey, fontSize: 13),
+                  style: TextStyle(
+                    color: SaviourPalette.shade600,
+                    fontSize: 13,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Immediate',
                   style: TextStyle(
-                    color: AppColors.textDark,
+                    color: SaviourPalette.shade950,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -269,10 +294,13 @@ class VitalReserveScreen extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD6E9FB),
+                  color: SaviourPalette.shade200,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.assignment_outlined, color: AppColors.checkBlue),
+                child: const Icon(
+                  Icons.assignment_outlined,
+                  color: SaviourPalette.shade600,
+                ),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -280,7 +308,7 @@ class VitalReserveScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textDark,
+                  color: SaviourPalette.shade950,
                 ),
               ),
             ],
@@ -288,10 +316,15 @@ class VitalReserveScreen extends StatelessWidget {
           const SizedBox(height: 16),
           RichText(
             text: const TextSpan(
-              style: TextStyle(fontSize: 15, height: 1.5, color: AppColors.textDark),
+              style: TextStyle(
+                fontSize: 15,
+                height: 1.5,
+                color: SaviourPalette.shade950,
+              ),
               children: [
                 TextSpan(
-                  text: 'Emergency blood request issued for a patient undergoing ',
+                  text:
+                      'Emergency blood request issued for a patient undergoing ',
                 ),
                 TextSpan(
                   text: 'Immediate surgery',
@@ -305,11 +338,15 @@ class VitalReserveScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Divider(color: Color(0xFFF0D5DA)),
+          const Divider(color: SaviourPalette.shade200),
           const SizedBox(height: 8),
-          const _ChecklistItem(text: 'Donors must have eaten within the last 4 hours.'),
+          const _ChecklistItem(
+            text: 'Donors must have eaten within the last 4 hours.',
+          ),
           const SizedBox(height: 10),
-          const _ChecklistItem(text: 'Valid ID required for hospital entrance.'),
+          const _ChecklistItem(
+            text: 'Valid ID required for hospital entrance.',
+          ),
         ],
       ),
     );
@@ -327,8 +364,11 @@ class VitalReserveScreen extends StatelessWidget {
             child: Container(
               width: 56,
               height: 56,
-              color: const Color(0xFFDCE6F0),
-              child: const Icon(Icons.local_hospital_outlined, color: AppColors.textGrey),
+              color: SaviourPalette.shade200,
+              child: const Icon(
+                Icons.local_hospital_outlined,
+                color: SaviourPalette.shade600,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -341,13 +381,16 @@ class VitalReserveScreen extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
-                    color: AppColors.textDark,
+                    color: SaviourPalette.shade950,
                   ),
                 ),
                 SizedBox(height: 2),
                 Text(
                   '452 Medical Center Plaza, East Wing',
-                  style: TextStyle(color: AppColors.textGrey, fontSize: 13),
+                  style: TextStyle(
+                    color: SaviourPalette.shade600,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -356,10 +399,13 @@ class VitalReserveScreen extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: const BoxDecoration(
-              color: Color(0xFFF0F0F0),
+              color: SaviourPalette.shade100,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.phone_outlined, color: AppColors.textDark),
+            child: const Icon(
+              Icons.phone_outlined,
+              color: SaviourPalette.shade950,
+            ),
           ),
         ],
       ),
@@ -372,10 +418,10 @@ class VitalReserveScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: SaviourPalette.shade50,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: SaviourPalette.shade950.withValues(alpha: 0.06),
             blurRadius: 10,
             offset: const Offset(0, -4),
           ),
@@ -384,23 +430,22 @@ class VitalReserveScreen extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Thanks for stepping up to help!")),
-                );
-              },
-              icon: const Icon(Icons.favorite, color: Colors.white),
+            child: NativeElevatedButton.icon(
+              onPressed: () => FeatureActions.notice(
+                context,
+                'Thanks for stepping up to help!',
+              ),
+              icon: const Icon(Icons.favorite, color: SaviourPalette.shade50),
               label: const Text(
                 "I'm interested",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: Colors.white,
+                  color: SaviourPalette.shade50,
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryRed,
+              style: NativeElevatedButton.styleFrom(
+                backgroundColor: SaviourPalette.shade800,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -415,11 +460,17 @@ class VitalReserveScreen extends StatelessWidget {
             height: 56,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFF0C6CE)),
+              border: Border.all(color: SaviourPalette.shade300),
             ),
-            child: IconButton(
-              icon: const Icon(Icons.support_agent_outlined, color: AppColors.primaryRed),
-              onPressed: () {},
+            child: NativeIconButton(
+              icon: const Icon(
+                Icons.support_agent_outlined,
+                color: SaviourPalette.shade800,
+              ),
+              onPressed: () => FeatureActions.notice(
+                context,
+                'Connecting you with a verified support coordinator.',
+              ),
             ),
           ),
         ],
@@ -444,11 +495,11 @@ class _InfoCard extends StatelessWidget {
       width: double.infinity,
       padding: padding,
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: SaviourPalette.shade950.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -470,36 +521,23 @@ class _ChecklistItem extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.check_circle_outline, color: AppColors.checkBlue, size: 20),
+        const Icon(
+          Icons.check_circle_outline,
+          color: SaviourPalette.shade600,
+          size: 20,
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 14, color: AppColors.textDark, height: 1.4),
+            style: const TextStyle(
+              fontSize: 14,
+              color: SaviourPalette.shade950,
+              height: 1.4,
+            ),
           ),
         ),
       ],
-    );
-  }
-}
-
-// -------------------- Demo entry point --------------------
-// Remove this if importing VitalReserveScreen into an existing app.
-
-void main() {
-  runApp(const VitalReserveApp());
-}
-
-class VitalReserveApp extends StatelessWidget {
-  const VitalReserveApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vital Reserve',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, scaffoldBackgroundColor: AppColors.background),
-      home: const VitalReserveScreen(),
     );
   }
 }

@@ -1,26 +1,9 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_scroll.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const VitalReserveApp());
-}
-
-class VitalReserveApp extends StatelessWidget {
-  const VitalReserveApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vital Reserve',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-        useMaterial3: true,
-      ),
-      home: const EmergencySosScreen(),
-    );
-  }
-}
+import 'package:saviour/features/home/feature_actions.dart';
 
 class EmergencySosScreen extends StatefulWidget {
   const EmergencySosScreen({super.key});
@@ -33,17 +16,17 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
   bool _notifyDonors = true;
   int _currentNavIndex = 1;
 
-  static const Color primaryRed = Color(0xFFB71C1C);
-  static const Color darkRed = Color(0xFF8E0000);
-  static const Color navyBlue = Color(0xFF1B3A57);
+  static const Color primaryRed = SaviourPalette.shade800;
+  static const Color darkRed = SaviourPalette.shade950;
+  static const Color navyBlue = SaviourPalette.shade800;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       appBar: _buildAppBar(),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: PlatformSingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -66,8 +49,8 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
   }
 
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
+    return NativeAppBar(
+      backgroundColor: SaviourPalette.shade50,
       elevation: 0,
       leading: const Icon(Icons.menu, color: primaryRed),
       title: const Text(
@@ -82,7 +65,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
       actions: const [
         Padding(
           padding: EdgeInsets.only(right: 16.0),
-          child: Icon(Icons.notifications_none, color: Colors.black87),
+          child: Icon(Icons.notifications_none, color: SaviourPalette.shade950),
         ),
       ],
     );
@@ -96,7 +79,11 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 22),
+          const Icon(
+            Icons.warning_amber_rounded,
+            color: SaviourPalette.shade50,
+            size: 22,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -105,7 +92,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                 Text(
                   'DISASTER MODE ACTIVE',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: SaviourPalette.shade50,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                     letterSpacing: 0.3,
@@ -115,7 +102,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                 Text(
                   'Government Verified: State\nEmergency (Level 5)',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: SaviourPalette.shade50,
                     fontSize: 12.5,
                     height: 1.3,
                   ),
@@ -124,10 +111,13 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
+          NativeElevatedButton(
+            onPressed: () => FeatureActions.notice(
+              context,
+              'Emergency protocol: verify the patient, hospital, coordinator, and required units before broadcasting.',
+            ),
+            style: NativeElevatedButton.styleFrom(
+              backgroundColor: SaviourPalette.shade50,
               foregroundColor: primaryRed,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
@@ -138,10 +128,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
             child: const Text(
               'VIEW\nPROTOCOL',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -156,11 +143,11 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: SaviourPalette.shade50,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: SaviourPalette.shade950.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -173,23 +160,18 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: SaviourPalette.shade950,
               ),
             ),
             const SizedBox(height: 8),
             const Text(
               'Press and hold for 3 seconds to broadcast',
-              style: TextStyle(
-                fontSize: 13.5,
-                color: Colors.black54,
-              ),
+              style: TextStyle(fontSize: 13.5, color: SaviourPalette.shade800),
             ),
             const SizedBox(height: 32),
-            GestureDetector(
+            PlatformGestureSurface(
               onLongPress: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('SOS Broadcast Sent!')),
-                );
+                FeatureActions.notice(context, 'SOS broadcast sent.');
               },
               child: Container(
                 width: 200,
@@ -216,7 +198,10 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 3),
+                        border: Border.all(
+                          color: SaviourPalette.shade50,
+                          width: 3,
+                        ),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       transform: Matrix4.identity()..rotateZ(0.785398), // 45deg
@@ -224,7 +209,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                         angle: -0.785398,
                         child: const Icon(
                           Icons.priority_high_rounded,
-                          color: Colors.white,
+                          color: SaviourPalette.shade50,
                           size: 28,
                         ),
                       ),
@@ -233,7 +218,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                     const Text(
                       'SOS',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: SaviourPalette.shade50,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2,
@@ -248,12 +233,16 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFFFCE4E4),
+                color: SaviourPalette.shade200,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.campaign_outlined, color: primaryRed, size: 20),
+                  const Icon(
+                    Icons.campaign_outlined,
+                    color: primaryRed,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   const Expanded(
                     child: Text(
@@ -265,9 +254,9 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                       ),
                     ),
                   ),
-                  Switch(
+                  NativeSwitch(
                     value: _notifyDonors,
-                    activeThumbColor: Colors.white,
+                    activeThumbColor: SaviourPalette.shade50,
                     activeTrackColor: primaryRed,
                     onChanged: (val) {
                       setState(() => _notifyDonors = val);
@@ -285,7 +274,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
   Widget _buildImmediateAssistance() {
     return Container(
       width: double.infinity,
-      color: const Color(0xFFECECEC),
+      color: SaviourPalette.shade100,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,7 +284,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: SaviourPalette.shade950,
             ),
           ),
           const SizedBox(height: 14),
@@ -306,7 +295,10 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                   icon: Icons.call,
                   label: 'Hospitals',
                   color: navyBlue,
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Calling nearby verified hospitals…',
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -315,7 +307,10 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                   icon: Icons.local_hospital_outlined,
                   label: 'Dispatch',
                   color: navyBlue,
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Medical dispatch has received the request.',
+                  ),
                 ),
               ),
             ],
@@ -335,7 +330,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F0F0),
+                color: SaviourPalette.shade100,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -352,21 +347,30 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                   ),
                   const Text(
                     'WhatsApp & SMS',
-                    style: TextStyle(color: Colors.black54, fontSize: 12.5),
+                    style: TextStyle(
+                      color: SaviourPalette.shade800,
+                      fontSize: 12.5,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       _CircleIconButton(
                         icon: Icons.chat,
-                        bgColor: const Color(0xFF25D366),
-                        onTap: () {},
+                        bgColor: SaviourPalette.shade400,
+                        onTap: () => FeatureActions.notice(
+                          context,
+                          'The verified alert is ready to share on WhatsApp.',
+                        ),
                       ),
                       const SizedBox(width: 10),
                       _CircleIconButton(
                         icon: Icons.sms,
-                        bgColor: const Color(0xFF64B5F6),
-                        onTap: () {},
+                        bgColor: SaviourPalette.shade400,
+                        onTap: () => FeatureActions.notice(
+                          context,
+                          'The verified alert is ready to share by SMS.',
+                        ),
                       ),
                     ],
                   ),
@@ -379,20 +383,21 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F0F0),
+                color: SaviourPalette.shade100,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.people_alt_outlined, color: navyBlue, size: 22),
+                  const Icon(
+                    Icons.people_alt_outlined,
+                    color: navyBlue,
+                    size: 22,
+                  ),
                   const SizedBox(height: 10),
                   const Text(
                     '124',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
                   const Text(
                     'Nearby Donors',
@@ -400,7 +405,10 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                   ),
                   const Text(
                     'Ready within 5km',
-                    style: TextStyle(color: Colors.black54, fontSize: 12.5),
+                    style: TextStyle(
+                      color: SaviourPalette.shade800,
+                      fontSize: 12.5,
+                    ),
                   ),
                 ],
               ),
@@ -416,9 +424,9 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: SaviourPalette.shade50,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE0B4B4)),
+          border: Border.all(color: SaviourPalette.shade300),
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -429,7 +437,7 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                 Container(
                   height: 160,
                   width: double.infinity,
-                  color: const Color(0xFFD9D9D9),
+                  color: SaviourPalette.shade200,
                   child: CustomPaint(
                     painter: _MapPatternPainter(),
                     child: const Center(
@@ -445,14 +453,18 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                   bottom: 10,
                   right: 10,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: SaviourPalette.shade50,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
+                          color: SaviourPalette.shade950.withValues(
+                            alpha: 0.15,
+                          ),
                           blurRadius: 4,
                         ),
                       ],
@@ -460,7 +472,11 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.location_on, size: 14, color: Colors.black87),
+                        Icon(
+                          Icons.location_on,
+                          size: 14,
+                          color: SaviourPalette.shade950,
+                        ),
                         SizedBox(width: 4),
                         Text(
                           "St. Mary's General",
@@ -490,13 +506,19 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
                         SizedBox(height: 2),
                         Text(
                           '451 Health Ave, Sector 4',
-                          style: TextStyle(color: Colors.black54, fontSize: 13),
+                          style: TextStyle(
+                            color: SaviourPalette.shade800,
+                            fontSize: 13,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {},
+                  NativeTextButton(
+                    onPressed: () => FeatureActions.notice(
+                      context,
+                      'Hospital location details can now be updated.',
+                    ),
                     child: const Text(
                       'UPDATE',
                       style: TextStyle(
@@ -515,12 +537,12 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
   }
 
   Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
+    return NativeBottomNavigationBar(
       currentIndex: _currentNavIndex,
       onTap: (index) => setState(() => _currentNavIndex = index),
       type: BottomNavigationBarType.fixed,
       selectedItemColor: primaryRed,
-      unselectedItemColor: Colors.black54,
+      unselectedItemColor: SaviourPalette.shade800,
       showUnselectedLabels: true,
       items: [
         const BottomNavigationBarItem(
@@ -534,7 +556,11 @@ class _EmergencySosScreenState extends State<EmergencySosScreen> {
               color: primaryRed,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.emergency_share, color: Colors.white, size: 20),
+            child: const Icon(
+              Icons.emergency_share,
+              color: SaviourPalette.shade50,
+              size: 20,
+            ),
           ),
           label: 'Alert',
         ),
@@ -566,22 +592,20 @@ class _AssistanceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
+    return NativeElevatedButton.icon(
       onPressed: onTap,
-      icon: Icon(icon, size: 18, color: Colors.white),
+      icon: Icon(icon, size: 18, color: SaviourPalette.shade50),
       label: Text(
         label,
         style: const TextStyle(
-          color: Colors.white,
+          color: SaviourPalette.shade50,
           fontWeight: FontWeight.bold,
         ),
       ),
-      style: ElevatedButton.styleFrom(
+      style: NativeElevatedButton.styleFrom(
         backgroundColor: color,
         padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 0,
       ),
     );
@@ -601,14 +625,14 @@ class _CircleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PlatformGestureSurface(
       onTap: onTap,
       customBorder: const CircleBorder(),
       child: Container(
         width: 34,
         height: 34,
         decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-        child: Icon(icon, color: Colors.white, size: 18),
+        child: Icon(icon, color: SaviourPalette.shade50, size: 18),
       ),
     );
   }
@@ -619,7 +643,7 @@ class _MapPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black12
+      ..color = SaviourPalette.shade200
       ..strokeWidth = 1;
 
     for (double x = 0; x < size.width; x += 24) {

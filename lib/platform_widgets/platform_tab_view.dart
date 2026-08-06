@@ -1,3 +1,4 @@
+import 'package:saviour/app_theme.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as material;
@@ -142,7 +143,7 @@ class _PlatformTabViewState extends ConsumerState<PlatformTabView>
     return Column(
       children: [
         material.Material(
-          color: const Color(0x00000000),
+          color: SaviourPalette.transparent,
           child: material.TabBar(
             controller: _materialController,
             labelColor: theme.primary,

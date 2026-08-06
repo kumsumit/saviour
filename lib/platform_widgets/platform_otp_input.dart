@@ -1,3 +1,4 @@
+import 'package:saviour/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -102,9 +103,9 @@ class PlatformOtpInputState extends State<PlatformOtpInput> {
                   LengthLimitingTextInputFormatter(widget.length),
                 ],
                 autofillHints: const [AutofillHints.oneTimeCode],
-                style: const TextStyle(color: Color(0x00000000)),
-                cursorColor: const Color(0x00000000),
-                backgroundCursorColor: const Color(0x00000000),
+                style: const TextStyle(color: SaviourPalette.transparent),
+                cursorColor: SaviourPalette.transparent,
+                backgroundCursorColor: SaviourPalette.transparent,
                 onChanged: _handleChanged,
               ),
             ),

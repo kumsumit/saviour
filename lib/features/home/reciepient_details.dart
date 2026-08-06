@@ -1,36 +1,47 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_scroll.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
+import 'package:saviour/features/home/feature_actions.dart';
+import 'package:saviour/features/home/recepient_form_screen.dart';
 
 class RecipientDetailsScreen extends StatefulWidget {
   const RecipientDetailsScreen({super.key});
 
   @override
-  State<RecipientDetailsScreen> createState() =>
-      _RecipientDetailsScreenState();
+  State<RecipientDetailsScreen> createState() => _RecipientDetailsScreenState();
 }
 
 class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
-  static const Color primaryRed = Color(0xFFA31621);
-  static const Color lightRedBg = Color(0xFFF9E9EA);
-  static const Color borderPink = Color(0xFFE8C7C9);
-  static const Color pageBg = Color(0xFFF6F6F7);
+  static const Color primaryRed = SaviourPalette.shade800;
+  static const Color lightRedBg = SaviourPalette.shade100;
+  static const Color borderPink = SaviourPalette.shade300;
+  static const Color pageBg = SaviourPalette.shade100;
 
   String _recipient = 'self'; // 'self' or 'family'
   String? _selectedBloodType;
 
   final List<String> _bloodTypes = [
-    'A+', 'A-', 'B+', 'B-',
-    'AB+', 'AB-', 'O+', 'O-',
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'AB+',
+    'AB-',
+    'O+',
+    'O-',
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       backgroundColor: pageBg,
-      appBar: AppBar(
+      appBar: NativeAppBar(
         backgroundColor: pageBg,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
+        leading: NativeIconButton(
           icon: const Icon(Icons.arrow_back, color: primaryRed),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
@@ -47,7 +58,7 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
         child: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
+              child: PlatformSingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +71,7 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
                         Text(
                           'Step 1 of 3: Recipient Details',
                           style: TextStyle(
-                            color: Color(0xFF1F4E5F),
+                            color: SaviourPalette.shade800,
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -68,7 +79,7 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
                         Text(
                           '33% Complete',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: SaviourPalette.shade500,
                             fontSize: 13,
                           ),
                         ),
@@ -78,12 +89,11 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
                     // Progress bar
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
+                      child: PlatformLinearProgressIndicator(
                         value: 0.33,
-                        minHeight: 6,
-                        backgroundColor: Colors.grey.shade300,
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(primaryRed),
+                        height: 6,
+                        backgroundColor: SaviourPalette.shade300,
+                        color: primaryRed,
                       ),
                     ),
                     const SizedBox(height: 28),
@@ -92,7 +102,7 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: SaviourPalette.shade950,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -100,7 +110,7 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
                       "We'll use this to tailor the message for potential donors.",
                       style: TextStyle(
                         fontSize: 15,
-                        color: Colors.black54,
+                        color: SaviourPalette.shade800,
                         height: 1.3,
                       ),
                     ),
@@ -122,8 +132,7 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
                             label: 'Family Member',
                             icon: Icons.people_alt,
                             selected: _recipient == 'family',
-                            onTap: () =>
-                                setState(() => _recipient = 'family'),
+                            onTap: () => setState(() => _recipient = 'family'),
                           ),
                         ),
                       ],
@@ -133,7 +142,7 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
                       'Required Blood Type',
                       style: TextStyle(
                         fontSize: 17,
-                        color: Colors.black87,
+                        color: SaviourPalette.shade950,
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -143,11 +152,11 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
                       itemCount: _bloodTypes.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                        childAspectRatio: 1.5,
-                      ),
+                            crossAxisCount: 4,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 1.5,
+                          ),
                       itemBuilder: (context, index) {
                         final type = _bloodTypes[index];
                         final selected = _selectedBloodType == type;
@@ -170,28 +179,27 @@ class _RecipientDetailsScreenState extends State<RecipientDetailsScreen> {
               decoration: BoxDecoration(
                 color: pageBg,
                 border: Border(
-                  top: BorderSide(color: Colors.grey.shade300, width: 1),
+                  top: BorderSide(color: SaviourPalette.shade300, width: 1),
                 ),
               ),
               child: SizedBox(
                 width: double.infinity,
                 height: 52,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
+                child: NativeElevatedButton(
+                  style: NativeElevatedButton.styleFrom(
                     backgroundColor: primaryRed,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                     elevation: 0,
                   ),
-                  onPressed: () {
-                    // TODO: navigate to Step 2
-                  },
+                  onPressed: () =>
+                      FeatureActions.open(context, const RecipientFormScreen()),
                   child: const Text(
                     'Next',
                     style: TextStyle(
                       fontSize: 17,
-                      color: Colors.white,
+                      color: SaviourPalette.shade50,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -224,13 +232,13 @@ class _RecipientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PlatformGestureSurface(
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 24),
         decoration: BoxDecoration(
-          color: selected ? lightRedBg : Colors.white,
+          color: selected ? lightRedBg : SaviourPalette.shade50,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: selected ? primaryRed : borderPink,
@@ -245,7 +253,7 @@ class _RecipientCard extends StatelessWidget {
               label,
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.black87,
+                color: SaviourPalette.shade950,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -273,12 +281,12 @@ class _BloodTypeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PlatformGestureSurface(
       borderRadius: BorderRadius.circular(10),
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: selected ? lightRedBg : Colors.white,
+          color: selected ? lightRedBg : SaviourPalette.shade50,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: selected ? primaryRed : borderPink,
@@ -291,7 +299,7 @@ class _BloodTypeChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: selected ? primaryRed : Colors.black54,
+            color: selected ? primaryRed : SaviourPalette.shade800,
           ),
         ),
       ),

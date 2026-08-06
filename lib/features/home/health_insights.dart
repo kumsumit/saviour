@@ -1,44 +1,27 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_list.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Health Insights',
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF7F5F5),
-        useMaterial3: true,
-      ),
-      home: const HealthInsightsScreen(),
-    );
-  }
-}
-
 // ---------- Color palette ----------
-const Color kPrimaryRed = Color(0xFFB71C2B);
-const Color kDarkRedText = Color(0xFF7A0F1E);
-const Color kBg = Color(0xFFF7F5F5);
-const Color kCardBorder = Color(0xFFF0D9DC);
-const Color kGreenBadgeBg = Color(0xFFE3F3E6);
-const Color kGreenBadgeText = Color(0xFF2E8B4F);
-const Color kBlueCard = Color(0xFFD9EBFB);
-const Color kBlueDark = Color(0xFF1F5A73);
+const Color kPrimaryRed = SaviourPalette.shade800;
+const Color kDarkRedText = SaviourPalette.shade900;
+const Color kBg = SaviourPalette.shade100;
+const Color kCardBorder = SaviourPalette.shade200;
+const Color kGreenBadgeBg = SaviourPalette.shade100;
+const Color kGreenBadgeText = SaviourPalette.shade600;
+const Color kBlueCard = SaviourPalette.shade200;
+const Color kBlueDark = SaviourPalette.shade700;
 
 class HealthInsightsScreen extends StatelessWidget {
   const HealthInsightsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       backgroundColor: kBg,
       appBar: _buildAppBar(),
-      body: ListView(
+      body: PlatformListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: [
           _buildLifetimeImpactCard(),
@@ -47,7 +30,7 @@ class HealthInsightsScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _buildCheckupCard(
             icon: Icons.water_drop,
-            iconBg: const Color(0xFFFBE2E4),
+            iconBg: SaviourPalette.shade200,
             iconColor: kPrimaryRed,
             title: 'Hemoglobin',
             value: '14.2',
@@ -58,8 +41,8 @@ class HealthInsightsScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _buildCheckupCard(
             icon: Icons.favorite_border,
-            iconBg: const Color(0xFFE7EAF0),
-            iconColor: const Color(0xFF3B4A6B),
+            iconBg: SaviourPalette.shade100,
+            iconColor: SaviourPalette.shade700,
             title: 'Blood Pressure',
             value: '120/80',
             unit: 'mmHg',
@@ -69,8 +52,8 @@ class HealthInsightsScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _buildCheckupCard(
             icon: Icons.favorite,
-            iconBg: const Color(0xFFE7EAF0),
-            iconColor: const Color(0xFF3B4A6B),
+            iconBg: SaviourPalette.shade100,
+            iconColor: SaviourPalette.shade700,
             title: 'Pulse',
             value: '72',
             unit: 'bpm',
@@ -102,7 +85,7 @@ class HealthInsightsScreen extends StatelessWidget {
 
   // ---------- App bar ----------
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
+    return NativeAppBar(
       backgroundColor: kBg,
       elevation: 0,
       centerTitle: false,
@@ -125,7 +108,7 @@ class HealthInsightsScreen extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF9C1626), Color(0xFFC21C33)],
+          colors: [SaviourPalette.shade800, SaviourPalette.shade800],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -144,7 +127,7 @@ class HealthInsightsScreen extends StatelessWidget {
           const Text(
             'YOUR LIFETIME IMPACT',
             style: TextStyle(
-              color: Colors.white70,
+              color: SaviourPalette.shade100,
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
@@ -170,7 +153,7 @@ class HealthInsightsScreen extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
+            color: SaviourPalette.shade50,
             fontSize: 34,
             fontWeight: FontWeight.bold,
           ),
@@ -178,7 +161,7 @@ class HealthInsightsScreen extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 13),
+          style: const TextStyle(color: SaviourPalette.shade100, fontSize: 13),
         ),
       ],
     );
@@ -189,7 +172,7 @@ class HealthInsightsScreen extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(
-        color: Colors.black87,
+        color: SaviourPalette.shade950,
         fontSize: 13,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.5,
@@ -201,7 +184,7 @@ class HealthInsightsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6DEE1),
+        color: SaviourPalette.shade200,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -229,7 +212,7 @@ class HealthInsightsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: kCardBorder),
       ),
@@ -253,7 +236,10 @@ class HealthInsightsScreen extends StatelessWidget {
           const SizedBox(height: 14),
           Text(
             title,
-            style: const TextStyle(color: Colors.black54, fontSize: 14),
+            style: const TextStyle(
+              color: SaviourPalette.shade800,
+              fontSize: 14,
+            ),
           ),
           const SizedBox(height: 4),
           RichText(
@@ -262,7 +248,7 @@ class HealthInsightsScreen extends StatelessWidget {
                 TextSpan(
                   text: value,
                   style: const TextStyle(
-                    color: Colors.black,
+                    color: SaviourPalette.shade950,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -270,7 +256,7 @@ class HealthInsightsScreen extends StatelessWidget {
                 TextSpan(
                   text: ' $unit',
                   style: const TextStyle(
-                    color: Colors.black54,
+                    color: SaviourPalette.shade800,
                     fontSize: 14,
                     fontWeight: FontWeight.normal,
                   ),
@@ -319,7 +305,7 @@ class HealthInsightsScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: kCardBorder),
       ),
@@ -340,7 +326,7 @@ class HealthInsightsScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isHighlighted
                             ? kPrimaryRed
-                            : const Color(0xFFF3C7CC),
+                            : SaviourPalette.shade300,
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(6),
                         ),
@@ -361,7 +347,7 @@ class HealthInsightsScreen extends StatelessWidget {
                       child: Text(
                         m,
                         style: const TextStyle(
-                          color: Colors.black45,
+                          color: SaviourPalette.shade700,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -393,7 +379,11 @@ class HealthInsightsScreen extends StatelessWidget {
               color: kBlueDark,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.event_note, color: Colors.white, size: 20),
+            child: const Icon(
+              Icons.event_note,
+              color: SaviourPalette.shade50,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -436,13 +426,13 @@ class HealthInsightsScreen extends StatelessWidget {
   Widget _buildTipsRow() {
     return SizedBox(
       height: 190,
-      child: ListView(
+      child: PlatformListView(
         scrollDirection: Axis.horizontal,
         children: [
           _tipCard(
             icon: Icons.water_drop_outlined,
-            iconColor: const Color(0xFF3B82C4),
-            iconBg: const Color(0xFFE3EEF9),
+            iconColor: SaviourPalette.shade600,
+            iconBg: SaviourPalette.shade100,
             title: 'Hydration is Key',
             description:
                 'Stay hydrated by drinking at least 2L of water today to prepare for your next visit.',
@@ -451,8 +441,8 @@ class HealthInsightsScreen extends StatelessWidget {
           const SizedBox(width: 12),
           _tipCard(
             icon: Icons.eco_outlined,
-            iconColor: const Color(0xFF3D9160),
-            iconBg: const Color(0xFFE0F3E6),
+            iconColor: SaviourPalette.shade500,
+            iconBg: SaviourPalette.shade100,
             title: 'Iron-Rich Foods',
             description:
                 'Boost your iron with lean meats, spinach, and legumes this week.',
@@ -475,7 +465,7 @@ class HealthInsightsScreen extends StatelessWidget {
       width: 220,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: kCardBorder),
       ),
@@ -484,10 +474,7 @@ class HealthInsightsScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: iconBg,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
             child: Icon(icon, color: iconColor, size: 20),
           ),
           const SizedBox(height: 12),
@@ -496,7 +483,7 @@ class HealthInsightsScreen extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 14,
-              color: Colors.black87,
+              color: SaviourPalette.shade950,
             ),
           ),
           const SizedBox(height: 6),
@@ -505,7 +492,7 @@ class HealthInsightsScreen extends StatelessWidget {
               description,
               style: const TextStyle(
                 fontSize: 12,
-                color: Colors.black54,
+                color: SaviourPalette.shade800,
                 height: 1.3,
               ),
             ),
@@ -521,8 +508,11 @@ class HealthInsightsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.arrow_forward_ios,
-                  size: 10, color: kDarkRedText),
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 10,
+                color: kDarkRedText,
+              ),
             ],
           ),
         ],
@@ -534,10 +524,10 @@ class HealthInsightsScreen extends StatelessWidget {
   Widget _buildBottomNav() {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFEDEDED),
+        color: SaviourPalette.shade100,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: SaviourPalette.shade950.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -556,7 +546,7 @@ class HealthInsightsScreen extends StatelessWidget {
   }
 
   Widget _navItem(IconData icon, String label, bool active) {
-    final color = active ? kPrimaryRed : Colors.black45;
+    final color = active ? kPrimaryRed : SaviourPalette.shade700;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -577,13 +567,21 @@ class HealthInsightsScreen extends StatelessWidget {
             color: kPrimaryRed,
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.health_and_safety_outlined,
-              color: Colors.white, size: 22),
+          child: const Icon(
+            Icons.health_and_safety_outlined,
+            color: SaviourPalette.shade50,
+            size: 22,
+          ),
         ),
         const SizedBox(height: 2),
-        const Text('Health',
-            style: TextStyle(
-                color: kPrimaryRed, fontSize: 11, fontWeight: FontWeight.w600)),
+        const Text(
+          'Health',
+          style: TextStyle(
+            color: kPrimaryRed,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }

@@ -1,4 +1,10 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_scroll.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
+import 'package:saviour/features/auth/login.dart';
+import 'package:saviour/features/home/feature_actions.dart';
 
 // ─────────────────────────────────────────────────────────────────────────
 // Vital Reserve — Account Side Drawer
@@ -7,47 +13,32 @@ import 'package:flutter/material.dart';
 // Sign Out button pinned to the bottom.
 // ─────────────────────────────────────────────────────────────────────────
 
-void main() {
-  runApp(const VitalReserveApp());
-}
-
-class VitalReserveApp extends StatelessWidget {
-  const VitalReserveApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vital Reserve',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
-      home: const _DrawerDemoScreen(),
-    );
-  }
-}
-
 // A minimal host screen so the drawer can be opened and previewed, matching
 // the "drawer over a dimmed background" look from the screenshot.
-class _DrawerDemoScreen extends StatelessWidget {
-  const _DrawerDemoScreen();
+class DrawerDemoScreen extends StatelessWidget {
+  const DrawerDemoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF2F0EF),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
+    return NativeScaffold(
+      backgroundColor: SaviourPalette.shade100,
+      appBar: NativeAppBar(
+        backgroundColor: SaviourPalette.shade50,
         elevation: 0,
         title: const Text(
           'Vital Reserve',
-          style: TextStyle(color: Color(0xFFB3202C), fontWeight: FontWeight.w700),
+          style: TextStyle(
+            color: SaviourPalette.shade800,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         centerTitle: true,
       ),
-      drawer: const AccountDrawer(),
       body: Builder(
         builder: (context) => Center(
-          child: ElevatedButton(
-            onPressed: () => Scaffold.of(context).openDrawer(),
+          child: NativeElevatedButton(
+            onPressed: () =>
+                FeatureActions.open(context, const AccountDrawer()),
             child: const Text('Open Menu'),
           ),
         ),
@@ -64,9 +55,9 @@ class AccountDrawer extends StatefulWidget {
 }
 
 class _AccountDrawerState extends State<AccountDrawer> {
-  static const primaryRed = Color(0xFFB3202C);
-  static const inkBlack = Color(0xFF1C1C1E);
-  static const bodyBrown = Color(0xFF6B5B57);
+  static const primaryRed = SaviourPalette.shade800;
+  static const inkBlack = SaviourPalette.shade950;
+  static const bodyBrown = SaviourPalette.shade700;
 
   // Index of the currently selected/active menu item.
   int _selectedIndex = 1;
@@ -88,8 +79,8 @@ class _AccountDrawerState extends State<AccountDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      backgroundColor: const Color(0xFFF2F0EF),
+    return NativeDrawer(
+      backgroundColor: SaviourPalette.shade100,
       width: MediaQuery.of(context).size.width * 0.82,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -98,37 +89,42 @@ class _AccountDrawerState extends State<AccountDrawer> {
         ),
       ),
       child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 12),
-            _buildProfileHeader(),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Divider(height: 1, color: Color(0xFFE3D8D5)),
-            ),
-            const SizedBox(height: 12),
+        child: PlatformSingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 12),
+              _buildProfileHeader(),
+              const SizedBox(height: 20),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Divider(height: 1, color: SaviourPalette.shade200),
+              ),
+              const SizedBox(height: 12),
 
-            ...List.generate(_topItems.length, (index) {
-              return _buildMenuTile(_topItems[index], index);
-            }),
+              ...List.generate(_topItems.length, (index) {
+                return _buildMenuTile(_topItems[index], index);
+              }),
 
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 4),
-              child: Divider(height: 1, color: Color(0xFFE3D8D5)),
-            ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                child: Divider(height: 1, color: SaviourPalette.shade200),
+              ),
 
-            ...List.generate(_bottomItems.length, (index) {
-              // Offset indices so they don't collide with top items.
-              return _buildMenuTile(_bottomItems[index], _topItems.length + index);
-            }),
+              ...List.generate(_bottomItems.length, (index) {
+                // Offset indices so they don't collide with top items.
+                return _buildMenuTile(
+                  _bottomItems[index],
+                  _topItems.length + index,
+                );
+              }),
 
-            const Spacer(),
+              const SizedBox(height: 20),
 
-            _buildSignOutButton(),
-            const SizedBox(height: 20),
-          ],
+              _buildSignOutButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -154,11 +150,11 @@ class _AccountDrawerState extends State<AccountDrawer> {
                 ),
                 child: ClipOval(
                   child: Container(
-                    color: const Color(0xFFDCEAF5),
+                    color: SaviourPalette.shade200,
                     child: const Icon(
                       Icons.person_rounded,
                       size: 54,
-                      color: Color(0xFF7FA8C9),
+                      color: SaviourPalette.shade400,
                     ),
                   ),
                 ),
@@ -172,13 +168,16 @@ class _AccountDrawerState extends State<AccountDrawer> {
                   decoration: BoxDecoration(
                     color: primaryRed,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFF2F0EF), width: 2),
+                    border: Border.all(
+                      color: SaviourPalette.shade100,
+                      width: 2,
+                    ),
                   ),
                   child: const Text(
                     'ELITE',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: SaviourPalette.shade50,
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -201,7 +200,7 @@ class _AccountDrawerState extends State<AccountDrawer> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7D4D6),
+              color: SaviourPalette.shade200,
               borderRadius: BorderRadius.circular(6),
             ),
             child: const Text(
@@ -229,46 +228,45 @@ class _AccountDrawerState extends State<AccountDrawer> {
     final selected = index == _selectedIndex;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(14),
-          onTap: () => setState(() => _selectedIndex = index),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-            decoration: BoxDecoration(
-              color: selected ? const Color(0xFF9FD1F0) : Colors.transparent,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  item.icon,
-                  size: 20,
-                  color: selected ? const Color(0xFF1D5D82) : primaryRed,
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    item.label,
-                    style: TextStyle(
-                      fontSize: 16.5,
-                      color: selected ? const Color(0xFF1D5D82) : bodyBrown,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                    ),
+      child: PlatformGestureSurface(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () => setState(() => _selectedIndex = index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            color: selected
+                ? SaviourPalette.shade300
+                : SaviourPalette.transparent,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                item.icon,
+                size: 20,
+                color: selected ? SaviourPalette.shade700 : primaryRed,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  item.label,
+                  style: TextStyle(
+                    fontSize: 16.5,
+                    color: selected ? SaviourPalette.shade700 : bodyBrown,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                   ),
                 ),
-                if (item.showDot)
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: primaryRed,
-                      shape: BoxShape.circle,
-                    ),
+              ),
+              if (item.showDot)
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: primaryRed,
+                    shape: BoxShape.circle,
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       ),
@@ -281,8 +279,15 @@ class _AccountDrawerState extends State<AccountDrawer> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
         width: double.infinity,
-        child: OutlinedButton.icon(
-          onPressed: () {},
+        child: NativeOutlinedButton.icon(
+          onPressed: () => FeatureActions.confirm(
+            context: context,
+            title: 'Sign out of Saviour?',
+            message: 'You can return anytime with your verified mobile number.',
+            actionLabel: 'Sign out',
+            onConfirmed: () =>
+                FeatureActions.replaceAll(context, const LoginScreen()),
+          ),
           icon: const Icon(Icons.logout_rounded, size: 18, color: bodyBrown),
           label: const Text(
             'Sign Out',
@@ -292,9 +297,9 @@ class _AccountDrawerState extends State<AccountDrawer> {
               fontSize: 14.5,
             ),
           ),
-          style: OutlinedButton.styleFrom(
+          style: NativeOutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 15),
-            side: const BorderSide(color: Color(0xFFCBB9B5)),
+            side: const BorderSide(color: SaviourPalette.shade300),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

@@ -1,45 +1,30 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_list.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
-
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Vital Reserve - Profile',
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF7F5F5),
-        useMaterial3: true,
-      ),
-      home: const ProfileScreen(),
-    );
-  }
-}
+import 'package:saviour/features/auth/login.dart';
+import 'package:saviour/features/home/feature_actions.dart';
 
 // ---------- Color palette ----------
-const Color kPrimaryRed = Color(0xFFB71C2B);
-const Color kBg = Color(0xFFF7F5F5);
-const Color kPinkBadgeBg = Color(0xFFF6DEE1);
-const Color kBlueBadgeBg = Color(0xFFBFE0F5);
-const Color kBlueBadgeText = Color(0xFF1F5A8A);
-const Color kPinkImpactBg = Color(0xFFFBE2E4);
-const Color kBlueImpactBg = Color(0xFFDCEEFA);
-const Color kBlueImpactText = Color(0xFF1F5A8A);
-const Color kGreyIconBg = Color(0xFFE7E5E5);
+const Color kPrimaryRed = SaviourPalette.shade800;
+const Color kBg = SaviourPalette.shade100;
+const Color kPinkBadgeBg = SaviourPalette.shade200;
+const Color kBlueBadgeBg = SaviourPalette.shade200;
+const Color kBlueBadgeText = SaviourPalette.shade700;
+const Color kPinkImpactBg = SaviourPalette.shade200;
+const Color kBlueImpactBg = SaviourPalette.shade100;
+const Color kBlueImpactText = SaviourPalette.shade700;
+const Color kGreyIconBg = SaviourPalette.shade200;
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       backgroundColor: kBg,
       appBar: _buildAppBar(),
-      body: ListView(
+      body: PlatformListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: [
           const SizedBox(height: 8),
@@ -49,10 +34,7 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _sectionTitle('SAVED ADDRESSES'),
-              _addNewAction(),
-            ],
+            children: [_sectionTitle('SAVED ADDRESSES'), _addNewAction()],
           ),
           const SizedBox(height: 12),
           _buildAddressCard(
@@ -84,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
             title: 'Security & Privacy',
           ),
           const SizedBox(height: 28),
-          _buildLogoutButton(),
+          _buildLogoutButton(context),
           const SizedBox(height: 24),
         ],
       ),
@@ -94,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
 
   // ---------- App bar ----------
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
+    return NativeAppBar(
       backgroundColor: kBg,
       elevation: 0,
       centerTitle: true,
@@ -110,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
       actions: const [
         Padding(
           padding: EdgeInsets.only(right: 16),
-          child: Icon(Icons.notifications_none, color: Colors.black87),
+          child: Icon(Icons.notifications_none, color: SaviourPalette.shade950),
         ),
       ],
     );
@@ -127,11 +109,11 @@ class ProfileScreen extends StatelessWidget {
               height: 110,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 4),
-                color: const Color(0xFFDDE3E8),
+                border: Border.all(color: SaviourPalette.shade50, width: 4),
+                color: SaviourPalette.shade200,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
+                    color: SaviourPalette.shade950.withValues(alpha: 0.08),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -140,7 +122,7 @@ class ProfileScreen extends StatelessWidget {
               child: const Icon(
                 Icons.person,
                 size: 60,
-                color: Color(0xFF9AA5AD),
+                color: SaviourPalette.shade400,
               ),
             ),
             Positioned(
@@ -153,7 +135,11 @@ class ProfileScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(color: kBg, width: 2),
                 ),
-                child: const Icon(Icons.edit, color: Colors.white, size: 14),
+                child: const Icon(
+                  Icons.edit,
+                  color: SaviourPalette.shade50,
+                  size: 14,
+                ),
               ),
             ),
           ],
@@ -164,7 +150,7 @@ class ProfileScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: SaviourPalette.shade950,
           ),
         ),
         const SizedBox(height: 10),
@@ -221,9 +207,9 @@ class ProfileScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFECE8E8)),
+        border: Border.all(color: SaviourPalette.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,7 +217,7 @@ class ProfileScreen extends StatelessWidget {
           const Text(
             'DONATION IMPACT',
             style: TextStyle(
-              color: Colors.black87,
+              color: SaviourPalette.shade950,
               fontSize: 12,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
@@ -297,7 +283,10 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(color: Colors.black54, fontSize: 12),
+            style: const TextStyle(
+              color: SaviourPalette.shade800,
+              fontSize: 12,
+            ),
           ),
         ],
       ),
@@ -309,7 +298,7 @@ class ProfileScreen extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(
-        color: Colors.black87,
+        color: SaviourPalette.shade950,
         fontSize: 13,
         fontWeight: FontWeight.w700,
         letterSpacing: 0.5,
@@ -345,9 +334,9 @@ class ProfileScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFECE8E8)),
+        border: Border.all(color: SaviourPalette.shade200),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -358,7 +347,7 @@ class ProfileScreen extends StatelessWidget {
               color: kGreyIconBg,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: Colors.black87, size: 20),
+            child: Icon(icon, color: SaviourPalette.shade950, size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -370,7 +359,7 @@ class ProfileScreen extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: SaviourPalette.shade950,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -378,7 +367,7 @@ class ProfileScreen extends StatelessWidget {
                   address,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Colors.black54,
+                    color: SaviourPalette.shade800,
                     height: 1.3,
                   ),
                 ),
@@ -391,45 +380,51 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // ---------- Settings tile ----------
-  Widget _buildSettingsTile({
-    required IconData icon,
-    required String title,
-  }) {
+  Widget _buildSettingsTile({required IconData icon, required String title}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFECE8E8)),
+        border: Border.all(color: SaviourPalette.shade200),
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.black87, size: 20),
+          Icon(icon, color: SaviourPalette.shade950, size: 20),
           const SizedBox(width: 14),
           Expanded(
             child: Text(
               title,
               style: const TextStyle(
                 fontSize: 15,
-                color: Colors.black87,
+                color: SaviourPalette.shade950,
               ),
             ),
           ),
-          const Icon(Icons.chevron_right, color: Colors.black38, size: 20),
+          const Icon(
+            Icons.chevron_right,
+            color: SaviourPalette.shade600,
+            size: 20,
+          ),
         ],
       ),
     );
   }
 
   // ---------- Logout button ----------
-  Widget _buildLogoutButton() {
+  Widget _buildLogoutButton(BuildContext context) {
     return Center(
-      child: TextButton(
-        onPressed: () {},
-        style: TextButton.styleFrom(
-          foregroundColor: kPrimaryRed,
+      child: NativeTextButton(
+        onPressed: () => FeatureActions.confirm(
+          context: context,
+          title: 'Sign out of Saviour?',
+          message: 'You can sign back in with your verified mobile number.',
+          actionLabel: 'Sign out',
+          onConfirmed: () =>
+              FeatureActions.replaceAll(context, const LoginScreen()),
         ),
+        style: NativeTextButton.styleFrom(foregroundColor: kPrimaryRed),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: const [
@@ -453,10 +448,10 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildBottomNav() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: SaviourPalette.shade950.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -476,7 +471,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _navItem(IconData icon, String label, bool active) {
-    final color = active ? kPrimaryRed : Colors.black45;
+    final color = active ? kPrimaryRed : SaviourPalette.shade700;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -500,9 +495,14 @@ class ProfileScreen extends StatelessWidget {
           child: const Icon(Icons.person, color: kPrimaryRed, size: 22),
         ),
         const SizedBox(height: 2),
-        const Text('Profile',
-            style: TextStyle(
-                color: kPrimaryRed, fontSize: 11, fontWeight: FontWeight.w600)),
+        const Text(
+          'Profile',
+          style: TextStyle(
+            color: kPrimaryRed,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }

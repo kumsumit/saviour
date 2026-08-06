@@ -122,13 +122,26 @@ class PlatformThemeData {
 
   /// A varied accent scale derived from the active primary color.
   Color accent(int index) {
-    const hueOffsets = <double>[0, 42, 88, 146, 204, 264, 318];
-    final base = HSLColor.fromColor(primary);
-    return base
-        .withHue((base.hue + hueOffsets[index % hueOffsets.length]) % 360)
-        .withSaturation((base.saturation * 0.92).clamp(0.42, 0.82))
-        .withLightness(isDark ? 0.68 : 0.44)
-        .toColor();
+    const light = <Color>[
+      SaviourPalette.shade600,
+      SaviourPalette.shade500,
+      SaviourPalette.shade700,
+      SaviourPalette.shade400,
+      SaviourPalette.shade800,
+      SaviourPalette.shade300,
+      SaviourPalette.shade900,
+    ];
+    const dark = <Color>[
+      SaviourPalette.shade300,
+      SaviourPalette.shade400,
+      SaviourPalette.shade200,
+      SaviourPalette.shade500,
+      SaviourPalette.shade100,
+      SaviourPalette.shade600,
+      SaviourPalette.shade50,
+    ];
+    final tones = isDark ? dark : light;
+    return tones[index % tones.length];
   }
 
   Color get success => accent(3);

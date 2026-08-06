@@ -1,3 +1,4 @@
+import 'package:saviour/app_theme.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as material;
@@ -20,7 +21,7 @@ class PlatformApp extends ConsumerWidget {
     super.key,
     required this.home,
     required this.title,
-    this.seedColor = const Color(0xFFB0102A),
+    this.seedColor = SaviourPalette.seed,
     this.debugShowCheckedModeBanner = false,
   });
 
@@ -48,6 +49,11 @@ class PlatformApp extends ConsumerWidget {
         title: title,
         debugShowCheckedModeBanner: debugShowCheckedModeBanner,
         theme: cupertino.CupertinoThemeData(primaryColor: seedColor),
+        localizationsDelegates: const [
+          material.DefaultMaterialLocalizations.delegate,
+          cupertino.DefaultCupertinoLocalizations.delegate,
+          DefaultWidgetsLocalizations.delegate,
+        ],
         builder: platformThemeBuilder,
         home: home,
       ),
@@ -85,8 +91,8 @@ class PlatformApp extends ConsumerWidget {
         title: title,
         debugShowCheckedModeBanner: debugShowCheckedModeBanner,
         themeMode: material.ThemeMode.system,
-        theme: const yaru.YaruThemeData(useMaterial3: true).theme,
-        darkTheme: const yaru.YaruThemeData(useMaterial3: true).darkTheme,
+        theme: _yaruTheme(seedColor, Brightness.light),
+        darkTheme: _yaruTheme(seedColor, Brightness.dark),
         builder: platformThemeBuilder,
         home: home,
       ),
@@ -109,11 +115,23 @@ material.ThemeData _materialTheme(Color seed, Brightness brightness) {
   return material.ThemeData(
     useMaterial3: true,
     brightness: brightness,
-    colorScheme: material.ColorScheme.fromSeed(
-      seedColor: seed,
-      brightness: brightness,
-    ),
+    colorScheme: brightness == Brightness.dark
+        ? AppColors.darkScheme(seed)
+        : AppColors.lightScheme(seed),
   );
+}
+
+material.ThemeData _yaruTheme(Color seed, Brightness brightness) {
+  final native = const yaru.YaruThemeData(
+    variant: yaru.YaruVariant.red,
+    useMaterial3: true,
+  );
+  return (brightness == Brightness.dark ? native.darkTheme : native.theme)
+      .copyWith(
+        colorScheme: brightness == Brightness.dark
+            ? AppColors.darkScheme(seed)
+            : AppColors.lightScheme(seed),
+      );
 }
 
 fluent.AccentColor _fluentAccent(Color color) {

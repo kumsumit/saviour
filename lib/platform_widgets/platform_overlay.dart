@@ -6,6 +6,7 @@ import 'package:macos_ui/macos_ui.dart' as macos;
 import 'package:saviour/providers/app_platform_provider.dart';
 import 'package:saviour/platform_widgets/platform_surface.dart';
 import 'package:saviour/platform_widgets/platform_theme.dart';
+import 'package:saviour/platform_widgets/platform_button.dart';
 
 /// Shows [builder] in the platform's modal sheet surface — a Cupertino popup on
 /// iOS, a `MacosSheet` on macOS, a Fluent `ContentDialog` on Windows, a Material
@@ -53,6 +54,119 @@ Future<T?> showPlatformSheet<T>({
       builder: builder,
     ),
   };
+}
+
+Future<DateTime?> showPlatformDatePicker({
+  required BuildContext context,
+  required AppPlatform platform,
+  required DateTime initialDate,
+  required DateTime firstDate,
+  required DateTime lastDate,
+}) {
+  if (platform == AppPlatform.android ||
+      platform == AppPlatform.linux ||
+      platform == AppPlatform.web ||
+      platform == AppPlatform.fuchsia) {
+    return material.showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+  }
+  return showPlatformSheet<DateTime>(
+    context: context,
+    platform: platform,
+    builder: (_) => _PlatformDatePickerPanel(
+      platform: platform,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    ),
+  );
+}
+
+class _PlatformDatePickerPanel extends StatefulWidget {
+  const _PlatformDatePickerPanel({
+    required this.platform,
+    required this.initialDate,
+    required this.firstDate,
+    required this.lastDate,
+  });
+
+  final AppPlatform platform;
+  final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
+
+  @override
+  State<_PlatformDatePickerPanel> createState() =>
+      _PlatformDatePickerPanelState();
+}
+
+class _PlatformDatePickerPanelState extends State<_PlatformDatePickerPanel> {
+  late DateTime _selected = widget.initialDate;
+
+  @override
+  Widget build(BuildContext context) {
+    final picker = switch (widget.platform) {
+      AppPlatform.ios => SizedBox(
+        height: 220,
+        child: cupertino.CupertinoDatePicker(
+          mode: cupertino.CupertinoDatePickerMode.date,
+          initialDateTime: widget.initialDate,
+          minimumDate: widget.firstDate,
+          maximumDate: widget.lastDate,
+          onDateTimeChanged: (value) => _selected = value,
+        ),
+      ),
+      AppPlatform.macos => macos.MacosDatePicker(
+        initialDate: widget.initialDate,
+        onDateChanged: (value) => _selected = value,
+      ),
+      AppPlatform.windows => fluent.DatePicker(
+        selected: widget.initialDate,
+        startDate: widget.firstDate,
+        endDate: widget.lastDate,
+        onChanged: (value) => setState(() => _selected = value),
+      ),
+      AppPlatform.android ||
+      AppPlatform.linux ||
+      AppPlatform.web ||
+      AppPlatform.fuchsia => const SizedBox.shrink(),
+    };
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 440),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            picker,
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(
+                  child: PlatformButton(
+                    kind: PlatformButtonKind.outlined,
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: PlatformButton(
+                    onPressed: () => Navigator.pop(context, _selected),
+                    child: const Text('Done'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// Shows a transient message in the platform's native notification surface — a

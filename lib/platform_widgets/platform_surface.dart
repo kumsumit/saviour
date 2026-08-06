@@ -1,3 +1,4 @@
+import 'package:saviour/app_theme.dart';
 import 'dart:ui' as ui;
 
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
@@ -128,7 +129,7 @@ class GlassSurface extends ConsumerWidget {
               ? macos.MacosLiquidGlassStyle.prominent
               : macos.MacosLiquidGlassStyle.regular,
           color: tint,
-          borderColor: border ? null : const Color(0x00000000),
+          borderColor: border ? null : SaviourPalette.transparent,
           boxShadow: border ? null : const [],
           child: padding == null
               ? child
@@ -139,9 +140,9 @@ class GlassSurface extends ConsumerWidget {
 
     // A light edge gives the surface a faint sheen; dark themes lean on a thin
     // white highlight, lighter themes on a brighter one.
-    final highlight = const Color(
-      0xFFFFFFFF,
-    ).withValues(alpha: isDark ? 0.08 : 0.45);
+    final highlight = SaviourPalette.shade50.withValues(
+      alpha: isDark ? 0.08 : 0.45,
+    );
     double alpha(double base) => (base * opacity).clamp(0.0, 1.0);
     return Container(
       margin: margin,

@@ -1,3 +1,4 @@
+import 'package:saviour/app_theme.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as material;
@@ -393,7 +394,7 @@ class _SidebarTile extends StatelessWidget {
                     width: 3,
                     height: 22,
                     decoration: BoxDecoration(
-                      color: selected ? accent : const Color(0x00000000),
+                      color: selected ? accent : SaviourPalette.transparent,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),

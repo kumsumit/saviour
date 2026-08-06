@@ -38,14 +38,14 @@ class PlatformBadge extends ConsumerWidget {
     final badge = switch (ref.watch(appPlatformProvider)) {
       AppPlatform.windows => fluent.InfoBadge(
         source: label,
-        color: backgroundColor,
-        foregroundColor: foregroundColor,
+        color: color,
+        foregroundColor: foreground,
         severity: _fluentSeverity(severity),
       ),
       AppPlatform.linux => yaru.YaruInfoBadge(
         title: label ?? const SizedBox.square(dimension: 6),
         yaruInfoType: _yaruSeverity(severity),
-        color: backgroundColor,
+        color: color,
         padding: label == null ? const EdgeInsets.all(3) : null,
       ),
       AppPlatform.android ||

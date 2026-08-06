@@ -1,3 +1,4 @@
+import 'package:saviour/app_theme.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as material;
@@ -60,7 +61,7 @@ class PlatformTapSurface extends ConsumerWidget {
         ),
       ),
       AppPlatform.linux => material.Material(
-        color: material.Colors.transparent,
+        color: SaviourPalette.transparent,
         child: material.InkWell(
           borderRadius: effectiveRadius,
           onTap: onTap,
@@ -70,7 +71,7 @@ class PlatformTapSurface extends ConsumerWidget {
       AppPlatform.android ||
       AppPlatform.web ||
       AppPlatform.fuchsia => material.Material(
-        color: material.Colors.transparent,
+        color: SaviourPalette.transparent,
         child: material.InkWell(
           borderRadius: effectiveRadius,
           onTap: onTap,
@@ -79,6 +80,36 @@ class PlatformTapSurface extends ConsumerWidget {
       ),
     };
   }
+}
+
+/// Platform tap surface with optional long-press semantics for legacy feature
+/// cards that expose a secondary action.
+class PlatformGestureSurface extends StatelessWidget {
+  const PlatformGestureSurface({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.onLongPress,
+    this.borderRadius,
+    this.customBorder,
+  });
+
+  final Widget child;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final BorderRadius? borderRadius;
+  final ShapeBorder? customBorder;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onLongPress: onLongPress,
+    child: PlatformTapSurface(
+      onTap: onTap,
+      borderRadius: borderRadius,
+      child: child,
+    ),
+  );
 }
 
 /// A transparent macOS tap surface that respects the child's own decoration,

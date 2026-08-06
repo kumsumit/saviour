@@ -1,4 +1,10 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_scroll.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
+import 'package:saviour/features/home/feature_actions.dart';
+import 'package:saviour/features/home/request_details.dart';
 
 class RecipientFormScreen extends StatefulWidget {
   const RecipientFormScreen({super.key});
@@ -8,12 +14,12 @@ class RecipientFormScreen extends StatefulWidget {
 }
 
 class _RecipientFormScreenState extends State<RecipientFormScreen> {
-  static const Color primaryRed = Color(0xFFA31621);
-  static const Color lightBlue = Color(0xFF8FC1E8);
-  static const Color fieldBg = Color(0xFFF3F1F2);
-  static const Color fieldBorder = Color(0xFFE0C9CB);
-  static const Color pageBg = Color(0xFFF6F6F7);
-  static const Color backPink = Color(0xFFF5D3D6);
+  static const Color primaryRed = SaviourPalette.shade800;
+  static const Color lightBlue = SaviourPalette.shade300;
+  static const Color fieldBg = SaviourPalette.shade100;
+  static const Color fieldBorder = SaviourPalette.shade300;
+  static const Color pageBg = SaviourPalette.shade100;
+  static const Color backPink = SaviourPalette.shade200;
 
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
@@ -33,12 +39,12 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       backgroundColor: pageBg,
-      appBar: AppBar(
+      appBar: NativeAppBar(
         backgroundColor: pageBg,
         elevation: 0,
-        leading: IconButton(
+        leading: NativeIconButton(
           icon: const Icon(Icons.arrow_back, color: primaryRed),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
@@ -52,9 +58,10 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
         ),
         centerTitle: false,
         actions: [
-          IconButton(
+          NativeIconButton(
             icon: const Icon(Icons.notifications_none, color: primaryRed),
-            onPressed: () {},
+            onPressed: () =>
+                FeatureActions.notice(context, 'No new notifications.'),
           ),
         ],
       ),
@@ -62,7 +69,7 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
         child: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
+              child: PlatformSingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +82,7 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                         Text(
                           'Step 2 of 3',
                           style: TextStyle(
-                            color: Color(0xFF1F4E5F),
+                            color: SaviourPalette.shade800,
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -83,7 +90,7 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                         Text(
                           '66% Complete',
                           style: TextStyle(
-                            color: Colors.black87,
+                            color: SaviourPalette.shade950,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
@@ -93,12 +100,11 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                     const SizedBox(height: 10),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
+                      child: PlatformLinearProgressIndicator(
                         value: 0.66,
-                        minHeight: 6,
-                        backgroundColor: Colors.grey.shade300,
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(primaryRed),
+                        height: 6,
+                        backgroundColor: SaviourPalette.shade300,
+                        color: primaryRed,
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -107,7 +113,7 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: SaviourPalette.shade950,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -115,7 +121,7 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                       'Please provide the details of your family member who requires the donation.',
                       style: TextStyle(
                         fontSize: 15,
-                        color: Colors.black54,
+                        color: SaviourPalette.shade800,
                         height: 1.3,
                       ),
                     ),
@@ -125,11 +131,13 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: SaviourPalette.shade50,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
+                            color: SaviourPalette.shade950.withValues(
+                              alpha: 0.04,
+                            ),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -153,11 +161,11 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                             itemCount: _relationships.length,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 12,
-                              crossAxisSpacing: 12,
-                              childAspectRatio: 2.6,
-                            ),
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 12,
+                                  crossAxisSpacing: 12,
+                                  childAspectRatio: 2.6,
+                                ),
                             itemBuilder: (context, index) {
                               final option = _relationships[index];
                               final selected = _relationship == option;
@@ -187,11 +195,12 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                           const SizedBox(height: 20),
                           _FieldLabel('Hospital Name'),
                           const SizedBox(height: 8),
-                          InkWell(
+                          PlatformGestureSurface(
                             borderRadius: BorderRadius.circular(10),
-                            onTap: () {
-                              // TODO: open hospital search
-                            },
+                            onTap: () => FeatureActions.notice(
+                              context,
+                              'Hospital search is active. Start typing the verified facility name.',
+                            ),
                             child: Container(
                               width: double.infinity,
                               padding: const EdgeInsets.symmetric(
@@ -205,15 +214,19 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.add_box,
-                                      color: primaryRed, size: 20),
+                                  const Icon(
+                                    Icons.add_box,
+                                    color: primaryRed,
+                                    size: 20,
+                                  ),
                                   const SizedBox(width: 10),
                                   Text(
-                                    _hospitalName ?? 'Select or search hospital',
+                                    _hospitalName ??
+                                        'Select or search hospital',
                                     style: TextStyle(
                                       color: _hospitalName == null
-                                          ? Colors.black54
-                                          : Colors.black87,
+                                          ? SaviourPalette.shade800
+                                          : SaviourPalette.shade950,
                                       fontSize: 15,
                                     ),
                                   ),
@@ -235,7 +248,10 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                             width: double.infinity,
                             decoration: const BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Color(0xFFBFC3C7), Color(0xFFDDD9DA)],
+                                colors: [
+                                  SaviourPalette.shade300,
+                                  SaviourPalette.shade200,
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
@@ -253,7 +269,7 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                    color: SaviourPalette.shade950,
                                   ),
                                 ),
                                 SizedBox(height: 4),
@@ -261,7 +277,7 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                                   'We prioritize requests from accredited medical facilities.',
                                   style: TextStyle(
                                     fontSize: 13,
-                                    color: Colors.black87,
+                                    color: SaviourPalette.shade950,
                                     height: 1.3,
                                   ),
                                 ),
@@ -282,7 +298,7 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
               decoration: BoxDecoration(
                 color: pageBg,
                 border: Border(
-                  top: BorderSide(color: Colors.grey.shade300, width: 1),
+                  top: BorderSide(color: SaviourPalette.shade300, width: 1),
                 ),
               ),
               child: Row(
@@ -290,8 +306,8 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                   Expanded(
                     child: SizedBox(
                       height: 52,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
+                      child: NativeElevatedButton(
+                        style: NativeElevatedButton.styleFrom(
                           backgroundColor: backPink,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
@@ -315,22 +331,23 @@ class _RecipientFormScreenState extends State<RecipientFormScreen> {
                     flex: 2,
                     child: SizedBox(
                       height: 52,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
+                      child: NativeElevatedButton(
+                        style: NativeElevatedButton.styleFrom(
                           backgroundColor: primaryRed,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        onPressed: () {
-                          // TODO: navigate to Step 3
-                        },
+                        onPressed: () => FeatureActions.open(
+                          context,
+                          const VitalReserveScreen(),
+                        ),
                         child: const Text(
                           'Next Step',
                           style: TextStyle(
                             fontSize: 17,
-                            color: Colors.white,
+                            color: SaviourPalette.shade50,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -358,7 +375,7 @@ class _FieldLabel extends StatelessWidget {
       style: const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        color: Colors.black87,
+        color: SaviourPalette.shade950,
       ),
     );
   }
@@ -381,17 +398,22 @@ class _StyledTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return NativeTextField(
       controller: controller,
       keyboardType: keyboardType,
-      style: const TextStyle(fontSize: 15, color: Colors.black87),
+      style: const TextStyle(fontSize: 15, color: SaviourPalette.shade950),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.black45, fontSize: 15),
+        hintStyle: const TextStyle(
+          color: SaviourPalette.shade700,
+          fontSize: 15,
+        ),
         filled: true,
         fillColor: fieldBg,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: fieldBorder),
@@ -425,12 +447,12 @@ class _RelationshipChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PlatformGestureSurface(
       borderRadius: BorderRadius.circular(10),
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: selected ? lightBlue : Colors.white,
+          color: selected ? lightBlue : SaviourPalette.shade50,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: selected ? lightBlue : fieldBorder,
@@ -443,7 +465,7 @@ class _RelationshipChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: selected ? const Color(0xFF1F4E5F) : Colors.black87,
+            color: selected ? SaviourPalette.shade800 : SaviourPalette.shade950,
           ),
         ),
       ),

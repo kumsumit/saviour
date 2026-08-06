@@ -1,18 +1,16 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_scroll.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
-
+import 'package:saviour/features/home/feature_actions.dart';
+import 'package:saviour/features/home/notification.dart';
+import 'package:saviour/features/home/reciepient_details.dart';
+import 'package:saviour/features/home/request_details.dart';
 
 // ---------------------------------------------------------------------------
 // Shared colors
 // ---------------------------------------------------------------------------
-class AppColors {
-  static const primaryRed = Color(0xFFB0102A);
-  static const darkText = Color(0xFF221417);
-  static const mutedText = Color(0xFF6B6265);
-  static const cardBg = Colors.white;
-  static const borderColor = Color(0xFFE9E3E4);
-  static const statBg = Color(0xFFECEAEB);
-}
-
 // ---------------------------------------------------------------------------
 // Models
 // ---------------------------------------------------------------------------
@@ -69,7 +67,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   final List<UrgentRequest> _requests = const [
     UrgentRequest(
       bloodType: 'O-',
-      bloodTypeColor: Color(0xFFF3D3D8),
+      bloodTypeColor: SaviourPalette.shade200,
       hospital: 'City General Hospital',
       status: 'URGENT',
       distance: '0.8 miles away',
@@ -77,7 +75,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     ),
     UrgentRequest(
       bloodType: 'A+',
-      bloodTypeColor: Color(0xFFD3E3F3),
+      bloodTypeColor: SaviourPalette.shade200,
       hospital: 'Hope Medical Center',
       status: 'STABLE',
       distance: '2.4 miles away',
@@ -85,7 +83,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     ),
     UrgentRequest(
       bloodType: 'B-',
-      bloodTypeColor: Color(0xFFF3D9D3),
+      bloodTypeColor: SaviourPalette.shade200,
       hospital: 'Mercy Children\'s Wing',
       status: 'URGENT',
       distance: '4.1 miles away',
@@ -100,7 +98,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
       title: 'Community Center Drive',
       location: 'Downtown Plaza, Bldg 4',
       time: '09:00 AM - 04:00 PM',
-      accentColor: Color(0xFF5E7C93),
+      accentColor: SaviourPalette.shade600,
     ),
     BloodCamp(
       day: '28',
@@ -108,7 +106,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
       title: 'Tech Hub Blood Camp',
       location: 'Innovation Center',
       time: '10:00 AM - 05:00 PM',
-      accentColor: Color(0xFF3A3F47),
+      accentColor: SaviourPalette.shade800,
     ),
   ];
 
@@ -120,11 +118,11 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       appBar: _buildAppBar(),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: PlatformSingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,10 +134,12 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               const SizedBox(height: 28),
               _buildSectionHeader('Urgent Requests Nearby', 'View All'),
               const SizedBox(height: 12),
-              ..._requests.map((r) => Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                    child: _UrgentRequestCard(request: r),
-                  )),
+              ..._requests.map(
+                (r) => Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                  child: _UrgentRequestCard(request: r),
+                ),
+              ),
               const SizedBox(height: 16),
               _buildCampsHeader(),
               const SizedBox(height: 14),
@@ -158,26 +158,33 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   // App bar
   // ---------------------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: const Color(0xFFF3F1F2),
+    return NativeAppBar(
+      backgroundColor: SaviourPalette.shade100,
       elevation: 0,
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.menu, color: AppColors.darkText),
-        onPressed: () {},
+      leading: NativeIconButton(
+        icon: const Icon(Icons.menu, color: SaviourPalette.shade950),
+        onPressed: () => FeatureActions.notice(
+          context,
+          'Use the main navigation to access every Saviour service.',
+        ),
       ),
       title: const Text(
         'Vital Reserve',
         style: TextStyle(
-          color: AppColors.primaryRed,
+          color: SaviourPalette.shade800,
           fontWeight: FontWeight.w800,
           fontSize: 20,
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications_none, color: AppColors.primaryRed),
-          onPressed: () {},
+        NativeIconButton(
+          icon: const Icon(
+            Icons.notifications_none,
+            color: SaviourPalette.shade800,
+          ),
+          onPressed: () =>
+              FeatureActions.open(context, const NotificationsScreen()),
         ),
       ],
     );
@@ -197,20 +204,20 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: AppColors.darkText,
+              color: SaviourPalette.shade950,
             ),
           ),
           const SizedBox(height: 6),
           RichText(
             text: const TextSpan(
-              style: TextStyle(fontSize: 14, color: AppColors.mutedText),
+              style: TextStyle(fontSize: 14, color: SaviourPalette.shade600),
               children: [
                 TextSpan(text: 'You are eligible to donate in '),
                 TextSpan(
                   text: '12 days',
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: AppColors.primaryRed,
+                    color: SaviourPalette.shade800,
                   ),
                 ),
                 TextSpan(text: '.'),
@@ -231,7 +238,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: AppColors.primaryRed,
+          color: SaviourPalette.shade800,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -240,7 +247,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             const Text(
               'Broadcast Blood Need',
               style: TextStyle(
-                color: Colors.white,
+                color: SaviourPalette.shade50,
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
@@ -251,7 +258,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               'and save a life today. High priority requests are processed '
               'instantly.',
               style: TextStyle(
-                color: Color(0xFFF6DCE0),
+                color: SaviourPalette.shade200,
                 fontSize: 14,
                 height: 1.4,
               ),
@@ -259,11 +266,14 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             const SizedBox(height: 16),
             SizedBox(
               height: 44,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: AppColors.primaryRed,
+              child: NativeElevatedButton(
+                onPressed: () => FeatureActions.open(
+                  context,
+                  const RecipientDetailsScreen(),
+                ),
+                style: NativeElevatedButton.styleFrom(
+                  backgroundColor: SaviourPalette.shade50,
+                  foregroundColor: SaviourPalette.shade800,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -272,10 +282,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 ),
                 child: const Text(
                   'Start Broadcast',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
                 ),
               ),
             ),
@@ -287,7 +294,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF14171C), Color(0xFF2A1418)],
+                    colors: [SaviourPalette.shade950, SaviourPalette.shade950],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -295,7 +302,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 child: const Center(
                   child: Icon(
                     Icons.local_hospital_outlined,
-                    color: Colors.white24,
+                    color: SaviourPalette.shade200,
                     size: 44,
                   ),
                 ),
@@ -321,17 +328,20 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: AppColors.darkText,
+              color: SaviourPalette.shade950,
             ),
           ),
-          GestureDetector(
-            onTap: () {},
+          PlatformGestureSurface(
+            onTap: () => FeatureActions.notice(
+              context,
+              'All nearby verified requests are available in the Requests tab.',
+            ),
             child: Text(
               actionLabel,
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppColors.primaryRed,
+                color: SaviourPalette.shade800,
               ),
             ),
           ),
@@ -354,7 +364,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: AppColors.darkText,
+              color: SaviourPalette.shade950,
             ),
           ),
           Row(
@@ -424,25 +434,25 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
         children: const [
           _StatCard(
             icon: Icons.favorite,
-            iconColor: AppColors.primaryRed,
+            iconColor: SaviourPalette.shade800,
             value: '12',
             label: 'LIVES SAVED',
           ),
           _StatCard(
             icon: Icons.water_drop,
-            iconColor: Color(0xFF3A6EA5),
+            iconColor: SaviourPalette.shade600,
             value: '4.8L',
             label: 'DONATED',
           ),
           _StatCard(
             icon: Icons.military_tech,
-            iconColor: Color(0xFF8A6D1D),
+            iconColor: SaviourPalette.shade600,
             value: 'Gold',
             label: 'STATUS',
           ),
           _StatCard(
             icon: Icons.calendar_month,
-            iconColor: AppColors.primaryRed,
+            iconColor: SaviourPalette.shade800,
             value: '42',
             label: 'DONATIONS',
           ),
@@ -455,14 +465,17 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   // Bottom navigation
   // ---------------------------------------------------------------------
   Widget _buildBottomNav() {
-    return BottomNavigationBar(
+    return NativeBottomNavigationBar(
       currentIndex: _currentNavIndex,
       onTap: (index) => setState(() => _currentNavIndex = index),
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.white,
-      selectedItemColor: AppColors.primaryRed,
-      unselectedItemColor: AppColors.mutedText,
-      selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+      backgroundColor: SaviourPalette.shade50,
+      selectedItemColor: SaviourPalette.shade800,
+      unselectedItemColor: SaviourPalette.shade600,
+      selectedLabelStyle: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
       unselectedLabelStyle: const TextStyle(fontSize: 12),
       items: const [
         BottomNavigationBarItem(
@@ -499,88 +512,86 @@ class _UrgentRequestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isUrgent = request.status == 'URGENT';
 
-    return Material(
-      color: AppColors.cardBg,
+    return PlatformGestureSurface(
       borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {},
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.borderColor),
-          ),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: request.bloodTypeColor,
-                child: Text(
-                  request.bloodType,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.darkText,
-                    fontSize: 14,
-                  ),
+      onTap: () => FeatureActions.open(context, const VitalReserveScreen()),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: SaviourPalette.shade200),
+        ),
+        child: Row(
+          children: [
+            NativeAvatar(
+              radius: 24,
+              backgroundColor: request.bloodTypeColor,
+              child: Text(
+                request.bloodType,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: SaviourPalette.shade950,
+                  fontSize: 14,
                 ),
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            request.hospital,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                              color: AppColors.darkText,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          request.hospital,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                            color: SaviourPalette.shade950,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: isUrgent
-                                ? const Color(0xFFF7DADD)
-                                : const Color(0xFFE6E6E6),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            request.status,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: isUrgent
-                                  ? AppColors.primaryRed
-                                  : AppColors.mutedText,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${request.distance} • ${request.bloodComponent}',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.mutedText,
                       ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isUrgent
+                              ? SaviourPalette.shade200
+                              : SaviourPalette.shade200,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          request.status,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: isUrgent
+                                ? SaviourPalette.shade800
+                                : SaviourPalette.shade600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${request.distance} • ${request.bloodComponent}',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: SaviourPalette.shade600,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 6),
-              const Icon(Icons.chevron_right, color: AppColors.mutedText),
-            ],
-          ),
+            ),
+            const SizedBox(width: 6),
+            const Icon(Icons.chevron_right, color: SaviourPalette.shade600),
+          ],
         ),
       ),
     );
@@ -599,9 +610,9 @@ class _BloodCampCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderColor),
+        border: Border.all(color: SaviourPalette.shade200),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -625,7 +636,7 @@ class _BloodCampCard extends StatelessWidget {
                 child: const Center(
                   child: Icon(
                     Icons.medical_services_outlined,
-                    color: Colors.white38,
+                    color: SaviourPalette.shade200,
                     size: 40,
                   ),
                 ),
@@ -637,7 +648,7 @@ class _BloodCampCard extends StatelessWidget {
                   width: 46,
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: SaviourPalette.shade50,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -647,7 +658,7 @@ class _BloodCampCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.primaryRed,
+                          color: SaviourPalette.shade800,
                           height: 1.0,
                         ),
                       ),
@@ -656,7 +667,7 @@ class _BloodCampCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.mutedText,
+                          color: SaviourPalette.shade600,
                         ),
                       ),
                     ],
@@ -675,21 +686,24 @@ class _BloodCampCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.darkText,
+                    color: SaviourPalette.shade950,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.location_on_outlined,
-                        size: 15, color: AppColors.mutedText),
+                    const Icon(
+                      Icons.location_on_outlined,
+                      size: 15,
+                      color: SaviourPalette.shade600,
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         camp.location,
                         style: const TextStyle(
                           fontSize: 12.5,
-                          color: AppColors.mutedText,
+                          color: SaviourPalette.shade600,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -699,15 +713,18 @@ class _BloodCampCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.access_time,
-                        size: 15, color: AppColors.mutedText),
+                    const Icon(
+                      Icons.access_time,
+                      size: 15,
+                      color: SaviourPalette.shade600,
+                    ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         camp.time,
                         style: const TextStyle(
                           fontSize: 12.5,
-                          color: AppColors.mutedText,
+                          color: SaviourPalette.shade600,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -718,18 +735,30 @@ class _BloodCampCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   height: 40,
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primaryRed,
-                      side: const BorderSide(color: AppColors.primaryRed),
+                  child: NativeOutlinedButton(
+                    onPressed: () => FeatureActions.confirm(
+                      context: context,
+                      title: 'Register for ${camp.title}?',
+                      message: '${camp.location} • ${camp.time}',
+                      actionLabel: 'Register',
+                      onConfirmed: () => FeatureActions.notice(
+                        context,
+                        'Your camp slot is reserved.',
+                      ),
+                    ),
+                    style: NativeOutlinedButton.styleFrom(
+                      foregroundColor: SaviourPalette.shade800,
+                      side: const BorderSide(color: SaviourPalette.shade800),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     child: const Text(
                       'Register Now',
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ),
@@ -763,7 +792,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.statBg,
+        color: SaviourPalette.shade100,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -776,7 +805,7 @@ class _StatCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: AppColors.darkText,
+              color: SaviourPalette.shade950,
             ),
           ),
           const SizedBox(height: 2),
@@ -785,7 +814,7 @@ class _StatCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: AppColors.mutedText,
+              color: SaviourPalette.shade600,
               letterSpacing: 0.3,
             ),
           ),
@@ -806,7 +835,7 @@ class _CircleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PlatformGestureSurface(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
@@ -814,9 +843,9 @@ class _CircleIconButton extends StatelessWidget {
         height: 34,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: AppColors.borderColor),
+          border: Border.all(color: SaviourPalette.shade200),
         ),
-        child: Icon(icon, size: 16, color: AppColors.darkText),
+        child: Icon(icon, size: 16, color: SaviourPalette.shade950),
       ),
     );
   }

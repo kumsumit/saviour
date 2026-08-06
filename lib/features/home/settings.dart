@@ -1,4 +1,9 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_scroll.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
+import 'package:saviour/features/home/feature_actions.dart';
 
 /// Vital Reserve — Settings Screen
 /// A single-file Flutter recreation of the "Settings" UI, matching the
@@ -8,32 +13,17 @@ import 'package:flutter/material.dart';
 /// and push it with:
 ///   Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
 
-class AppColors {
-  static const Color primaryRed = Color(0xFFB91C3C);
-  static const Color background = Color(0xFFF7F7F9);
-  static const Color cardBackground = Colors.white;
-  static const Color textDark = Color(0xFF1A1A1A);
-  static const Color textGrey = Color(0xFF6B6B6B);
-  static const Color sectionLabel = Color(0xFFB4788A);
-  static const Color chevron = Color(0xFFCFC2C6);
-  static const Color divider = Color(0xFFF0EDEF);
-  static const Color editProfileBg = Color(0xFFBFE0F5);
-  static const Color editProfileText = Color(0xFF1B4E66);
-  static const Color enabledChipBg = Color(0xFFE4E1E4);
-  static const Color enabledChipText = Color(0xFF6B6B6B);
-}
-
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
+    return NativeScaffold(
+      backgroundColor: SaviourPalette.shade50,
       appBar: _buildAppBar(context),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: PlatformSingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,17 +36,26 @@ class SettingsScreen extends StatelessWidget {
                 _SettingsRow(
                   icon: Icons.location_on_outlined,
                   label: 'Manage Addresses',
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Address management is ready.',
+                  ),
                 ),
                 _SettingsRow(
                   icon: Icons.bloodtype_outlined,
                   label: 'Change Blood Type',
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Your blood type can be updated after identity verification.',
+                  ),
                 ),
                 _SettingsRow(
                   icon: Icons.notifications_none,
                   label: 'Notification Preferences',
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Notification preferences are saved automatically.',
+                  ),
                   showDivider: false,
                 ),
               ]),
@@ -67,7 +66,10 @@ class SettingsScreen extends StatelessWidget {
                 _SettingsRow(
                   icon: Icons.lock_outline,
                   label: 'Change Password',
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'A secure password reset link has been requested.',
+                  ),
                 ),
                 _SettingsRow(
                   icon: Icons.fingerprint,
@@ -84,10 +86,16 @@ class SettingsScreen extends StatelessWidget {
                     children: [
                       _buildEnabledChip(),
                       const SizedBox(width: 6),
-                      const Icon(Icons.chevron_right, color: AppColors.chevron),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: SaviourPalette.shade300,
+                      ),
                     ],
                   ),
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Language selection is available for supported locales.',
+                  ),
                   showDivider: false,
                   showOwnChevron: false,
                 ),
@@ -99,22 +107,34 @@ class SettingsScreen extends StatelessWidget {
                 _SettingsRow(
                   icon: Icons.help_outline,
                   label: 'Help Center',
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Opening the Saviour help centre.',
+                  ),
                 ),
                 _SettingsRow(
                   icon: Icons.description_outlined,
                   label: 'Privacy Policy',
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Your privacy controls and policy are available here.',
+                  ),
                 ),
                 _SettingsRow(
                   icon: Icons.article_outlined,
                   label: 'Terms of Service',
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Terms of Service opened.',
+                  ),
                 ),
                 _SettingsRow(
                   icon: Icons.info_outline,
                   label: 'About Vital Reserve',
-                  onTap: () {},
+                  onTap: () => FeatureActions.notice(
+                    context,
+                    'Saviour connects verified donors, hospitals, and recipients.',
+                  ),
                   showDivider: false,
                 ),
               ]),
@@ -124,7 +144,10 @@ class SettingsScreen extends StatelessWidget {
               const Center(
                 child: Text(
                   'Version 2.4.1 (Build 1082)',
-                  style: TextStyle(color: Color(0xFFE0AEB8), fontSize: 13),
+                  style: TextStyle(
+                    color: SaviourPalette.shade300,
+                    fontSize: 13,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -139,19 +162,19 @@ class SettingsScreen extends StatelessWidget {
   // -------------------- App Bar --------------------
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: AppColors.background,
+    return NativeAppBar(
+      backgroundColor: SaviourPalette.shade50,
       elevation: 0,
       leadingWidth: 40,
       titleSpacing: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: AppColors.primaryRed),
+      leading: NativeIconButton(
+        icon: const Icon(Icons.arrow_back, color: SaviourPalette.shade800),
         onPressed: () => Navigator.of(context).maybePop(),
       ),
       title: const Text(
         'Settings',
         style: TextStyle(
-          color: AppColors.primaryRed,
+          color: SaviourPalette.shade800,
           fontWeight: FontWeight.bold,
           fontSize: 24,
         ),
@@ -166,11 +189,11 @@ class SettingsScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: SaviourPalette.shade950.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -179,10 +202,10 @@ class SettingsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const CircleAvatar(
+          const NativeAvatar(
             radius: 32,
-            backgroundColor: Color(0xFFEDEDED),
-            child: Icon(Icons.person, size: 34, color: Color(0xFFB0B0B0)),
+            backgroundColor: SaviourPalette.shade100,
+            child: Icon(Icons.person, size: 34, color: SaviourPalette.shade400),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -194,7 +217,7 @@ class SettingsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+                    color: SaviourPalette.shade950,
                     height: 1.2,
                   ),
                 ),
@@ -202,15 +225,18 @@ class SettingsScreen extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryRed,
+                        color: SaviourPalette.shade800,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
                         'O+',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: SaviourPalette.shade50,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -221,7 +247,7 @@ class SettingsScreen extends StatelessWidget {
                       child: Text(
                         'Universal Donor',
                         style: TextStyle(
-                          color: AppColors.textDark,
+                          color: SaviourPalette.shade950,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
@@ -235,14 +261,14 @@ class SettingsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.editProfileBg,
+              color: SaviourPalette.shade200,
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Text(
               'Edit Profile',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.editProfileText,
+                color: SaviourPalette.shade800,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
               ),
@@ -261,7 +287,7 @@ class SettingsScreen extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-          color: AppColors.sectionLabel,
+          color: SaviourPalette.shade500,
           fontWeight: FontWeight.bold,
           fontSize: 13,
           letterSpacing: 0.5,
@@ -274,11 +300,11 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: SaviourPalette.shade950.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -292,12 +318,12 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.enabledChipBg,
+        color: SaviourPalette.shade200,
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Text(
         'Enabled',
-        style: TextStyle(color: AppColors.enabledChipText, fontSize: 12),
+        style: TextStyle(color: SaviourPalette.shade600, fontSize: 12),
       ),
     );
   }
@@ -307,24 +333,24 @@ class SettingsScreen extends StatelessWidget {
   Widget _buildSignOutButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Signed out')),
-          );
-        },
-        icon: const Icon(Icons.logout, color: AppColors.textDark, size: 18),
+      child: NativeOutlinedButton.icon(
+        onPressed: () => FeatureActions.notice(context, 'Signed out.'),
+        icon: const Icon(
+          Icons.logout,
+          color: SaviourPalette.shade950,
+          size: 18,
+        ),
         label: const Text(
           'Sign Out',
           style: TextStyle(
-            color: AppColors.textDark,
+            color: SaviourPalette.shade950,
             fontWeight: FontWeight.w600,
             fontSize: 15,
           ),
         ),
-        style: OutlinedButton.styleFrom(
+        style: NativeOutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
-          side: const BorderSide(color: Color(0xFFDDD5D8)),
+          side: const BorderSide(color: SaviourPalette.shade200),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -339,10 +365,10 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
+        color: SaviourPalette.shade50,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: SaviourPalette.shade950.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -368,17 +394,21 @@ class SettingsScreen extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.primaryRed,
+          color: SaviourPalette.shade800,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Colors.white, size: 20),
+            Icon(icon, color: SaviourPalette.shade50, size: 20),
             const SizedBox(height: 2),
             Text(
               label,
-              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                color: SaviourPalette.shade50,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -387,11 +417,11 @@ class SettingsScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: AppColors.textDark, size: 20),
+        Icon(icon, color: SaviourPalette.shade950, size: 20),
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(color: AppColors.textDark, fontSize: 11),
+          style: const TextStyle(color: SaviourPalette.shade950, fontSize: 11),
         ),
       ],
     );
@@ -420,7 +450,7 @@ class _SettingsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return PlatformGestureSurface(
       onTap: onTap,
       child: Column(
         children: [
@@ -428,7 +458,7 @@ class _SettingsRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                Icon(icon, color: AppColors.primaryRed, size: 20),
+                Icon(icon, color: SaviourPalette.shade800, size: 20),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
@@ -436,18 +466,26 @@ class _SettingsRow extends StatelessWidget {
                     textAlign: centerLabel ? TextAlign.center : TextAlign.start,
                     style: const TextStyle(
                       fontSize: 15.5,
-                      color: AppColors.textDark,
+                      color: SaviourPalette.shade950,
                     ),
                   ),
                 ),
                 ?trailing,
                 if (trailing == null && showOwnChevron)
-                  const Icon(Icons.chevron_right, color: AppColors.chevron),
+                  const Icon(
+                    Icons.chevron_right,
+                    color: SaviourPalette.shade300,
+                  ),
               ],
             ),
           ),
           if (showDivider)
-            const Divider(height: 1, indent: 50, endIndent: 16, color: AppColors.divider),
+            const Divider(
+              height: 1,
+              indent: 50,
+              endIndent: 16,
+              color: SaviourPalette.shade100,
+            ),
         ],
       ),
     );
@@ -465,32 +503,11 @@ class _BiometricSwitchState extends State<_BiometricSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    return Switch(
+    return NativeSwitch(
       value: _value,
-      activeThumbColor: Colors.white,
-      activeTrackColor: AppColors.primaryRed,
+      activeThumbColor: SaviourPalette.shade50,
+      activeTrackColor: SaviourPalette.shade800,
       onChanged: (v) => setState(() => _value = v),
-    );
-  }
-}
-
-// -------------------- Demo entry point --------------------
-// Remove this if importing SettingsScreen into an existing app.
-
-void main() {
-  runApp(const SettingsApp());
-}
-
-class SettingsApp extends StatelessWidget {
-  const SettingsApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vital Reserve - Settings',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, scaffoldBackgroundColor: AppColors.background),
-      home: const SettingsScreen(),
     );
   }
 }

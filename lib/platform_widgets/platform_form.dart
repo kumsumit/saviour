@@ -20,6 +20,8 @@ class PlatformTextField extends ConsumerWidget {
     this.suffix,
     this.keyboardType,
     this.textInputAction,
+    this.inputFormatters,
+    this.autofillHints,
     this.style,
     this.autofocus = false,
     this.readOnly = false,
@@ -38,6 +40,8 @@ class PlatformTextField extends ConsumerWidget {
   final Widget? suffix;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
+  final List<TextInputFormatter>? inputFormatters;
+  final Iterable<String>? autofillHints;
   final TextStyle? style;
   final bool autofocus;
   final bool readOnly;
@@ -62,6 +66,8 @@ class PlatformTextField extends ConsumerWidget {
         suffix: suffix,
         keyboardType: keyboardType,
         textInputAction: textInputAction,
+        inputFormatters: inputFormatters,
+        autofillHints: autofillHints,
         style: resolvedStyle,
         autofocus: autofocus,
         readOnly: readOnly,
@@ -80,6 +86,8 @@ class PlatformTextField extends ConsumerWidget {
         suffix: suffix,
         keyboardType: keyboardType,
         textInputAction: textInputAction,
+        inputFormatters: inputFormatters,
+        autofillHints: autofillHints,
         style: resolvedStyle,
         autofocus: autofocus,
         readOnly: readOnly,
@@ -98,6 +106,8 @@ class PlatformTextField extends ConsumerWidget {
         suffix: suffix,
         keyboardType: keyboardType,
         textInputAction: textInputAction,
+        inputFormatters: inputFormatters,
+        autofillHints: autofillHints,
         style: resolvedStyle,
         autofocus: autofocus,
         readOnly: readOnly,
@@ -121,6 +131,8 @@ class PlatformTextField extends ConsumerWidget {
         ),
         keyboardType: keyboardType,
         textInputAction: textInputAction,
+        inputFormatters: inputFormatters,
+        autofillHints: autofillHints,
         style: resolvedStyle,
         autofocus: autofocus,
         readOnly: readOnly,

@@ -1,3 +1,4 @@
+import 'package:saviour/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' show ProviderScope;
 import 'package:saviour/features/auth/login.dart';
@@ -14,7 +15,7 @@ class VitalReserveApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const PlatformApp(
       title: 'Saviour',
-      seedColor: Color(0xFFB0102A),
+      seedColor: SaviourPalette.seed,
       home: LoginScreen(),
     );
   }

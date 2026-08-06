@@ -1,43 +1,28 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_list.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
-
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Vital Reserve - Notifications',
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF7F5F5),
-        useMaterial3: true,
-      ),
-      home: const NotificationsScreen(),
-    );
-  }
-}
+import 'package:saviour/features/home/feature_actions.dart';
+import 'package:saviour/features/home/request_details.dart';
 
 // ---------- Color palette ----------
-const Color kPrimaryRed = Color(0xFFB71C2B);
-const Color kBg = Color(0xFFF7F5F5);
-const Color kUrgentBg = Color(0xFFFAD4D8);
-const Color kBlueAccent = Color(0xFF1F5A8A);
-const Color kBlueIconBg = Color(0xFFD9EBFB);
-const Color kGreyIconBg = Color(0xFFE7E5E5);
-const Color kBrownDot = Color(0xFF7A5A4E);
+const Color kPrimaryRed = SaviourPalette.shade800;
+const Color kBg = SaviourPalette.shade100;
+const Color kUrgentBg = SaviourPalette.shade200;
+const Color kBlueAccent = SaviourPalette.shade700;
+const Color kBlueIconBg = SaviourPalette.shade200;
+const Color kGreyIconBg = SaviourPalette.shade200;
+const Color kBrownDot = SaviourPalette.shade600;
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       backgroundColor: kBg,
       appBar: _buildAppBar(),
-      body: ListView(
+      body: PlatformListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: [
           _buildHeader(),
@@ -45,6 +30,7 @@ class NotificationsScreen extends StatelessWidget {
           _sectionHeader('URGENT REQUESTS', kPrimaryRed),
           const SizedBox(height: 10),
           _buildUrgentCard(
+            context: context,
             icon: Icons.water_drop,
             title: 'Critical Need: O- Negative',
             time: '2M AGO',
@@ -54,6 +40,7 @@ class NotificationsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _buildUrgentCard(
+            context: context,
             icon: Icons.add,
             title: 'Nearby Emergency Request',
             time: '1H AGO',
@@ -87,7 +74,7 @@ class NotificationsScreen extends StatelessWidget {
           const SizedBox(height: 10),
           _buildStandardCard(
             icon: Icons.verified_user_outlined,
-            iconColor: Colors.black54,
+            iconColor: SaviourPalette.shade800,
             iconBg: kGreyIconBg,
             title: 'Eligibility Restored',
             time: '2D AGO',
@@ -97,7 +84,7 @@ class NotificationsScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _buildStandardCard(
             icon: Icons.settings_outlined,
-            iconColor: Colors.black54,
+            iconColor: SaviourPalette.shade800,
             iconBg: kGreyIconBg,
             title: 'Security Update',
             time: '1W AGO',
@@ -113,7 +100,7 @@ class NotificationsScreen extends StatelessWidget {
 
   // ---------- App bar ----------
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
+    return NativeAppBar(
       backgroundColor: kBg,
       elevation: 0,
       centerTitle: true,
@@ -159,7 +146,7 @@ class NotificationsScreen extends StatelessWidget {
         const Text(
           'Notifications',
           style: TextStyle(
-            color: Colors.black,
+            color: SaviourPalette.shade950,
             fontSize: 26,
             fontWeight: FontWeight.bold,
           ),
@@ -207,6 +194,7 @@ class NotificationsScreen extends StatelessWidget {
 
   // ---------- Urgent card ----------
   Widget _buildUrgentCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String time,
@@ -232,7 +220,7 @@ class NotificationsScreen extends StatelessWidget {
                   color: kPrimaryRed,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: Colors.white, size: 20),
+                child: Icon(icon, color: SaviourPalette.shade50, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -246,7 +234,7 @@ class NotificationsScreen extends StatelessWidget {
                           child: Text(
                             title,
                             style: const TextStyle(
-                              color: Colors.black87,
+                              color: SaviourPalette.shade950,
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                             ),
@@ -255,7 +243,7 @@ class NotificationsScreen extends StatelessWidget {
                         Text(
                           time,
                           style: const TextStyle(
-                            color: Colors.black54,
+                            color: SaviourPalette.shade800,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
@@ -266,7 +254,7 @@ class NotificationsScreen extends StatelessWidget {
                     Text(
                       description,
                       style: const TextStyle(
-                        color: Colors.black87,
+                        color: SaviourPalette.shade950,
                         fontSize: 13,
                         height: 1.35,
                       ),
@@ -280,14 +268,17 @@ class NotificationsScreen extends StatelessWidget {
             const SizedBox(height: 14),
             Align(
               alignment: Alignment.centerLeft,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
+              child: NativeElevatedButton(
+                onPressed: () =>
+                    FeatureActions.open(context, const VitalReserveScreen()),
+                style: NativeElevatedButton.styleFrom(
                   backgroundColor: kPrimaryRed,
-                  foregroundColor: Colors.white,
+                  foregroundColor: SaviourPalette.shade50,
                   elevation: 0,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -320,7 +311,7 @@ class NotificationsScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -328,10 +319,7 @@ class NotificationsScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: iconBg,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
             child: Icon(icon, color: iconColor, size: 20),
           ),
           const SizedBox(width: 12),
@@ -346,7 +334,7 @@ class NotificationsScreen extends StatelessWidget {
                       child: Text(
                         title,
                         style: const TextStyle(
-                          color: Colors.black87,
+                          color: SaviourPalette.shade950,
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                         ),
@@ -355,7 +343,7 @@ class NotificationsScreen extends StatelessWidget {
                     Text(
                       time,
                       style: const TextStyle(
-                        color: Colors.black45,
+                        color: SaviourPalette.shade700,
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),
@@ -366,7 +354,7 @@ class NotificationsScreen extends StatelessWidget {
                 Text(
                   description,
                   style: const TextStyle(
-                    color: Colors.black54,
+                    color: SaviourPalette.shade800,
                     fontSize: 13,
                     height: 1.35,
                   ),
@@ -383,10 +371,10 @@ class NotificationsScreen extends StatelessWidget {
   Widget _buildBottomNav() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: SaviourPalette.shade950.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -406,7 +394,7 @@ class NotificationsScreen extends StatelessWidget {
   }
 
   Widget _navItem(IconData icon, String label, bool active) {
-    final color = active ? kPrimaryRed : Colors.black45;
+    final color = active ? kPrimaryRed : SaviourPalette.shade700;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -430,9 +418,14 @@ class NotificationsScreen extends StatelessWidget {
           child: const Icon(Icons.water_drop, color: kPrimaryRed, size: 22),
         ),
         const SizedBox(height: 2),
-        const Text('Requests',
-            style: TextStyle(
-                color: kPrimaryRed, fontSize: 11, fontWeight: FontWeight.w600)),
+        const Text(
+          'Requests',
+          style: TextStyle(
+            color: kPrimaryRed,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }

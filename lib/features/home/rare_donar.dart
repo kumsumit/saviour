@@ -1,38 +1,9 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_list.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
-
-void main() => runApp(const VitalReserveApp());
-
-class VitalReserveApp extends StatelessWidget {
-  const VitalReserveApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vital Reserve',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF5F6F8),
-        useMaterial3: true,
-      ),
-      home: const InventoryHomePage(),
-    );
-  }
-}
-
-// ---------- Colors ----------
-class AppColors {
-  static const red = Color(0xFFB71C2C);
-  static const darkRed = Color(0xFF8E1622);
-  static const blue = Color(0xFF1D5FA6);
-  static const lightBlueBg = Color(0xFFEFF5FC);
-  static const criticalBg = Color(0xFFFDEEEE);
-  static const criticalBorder = Color(0xFFF3C6C9);
-  static const stableBadgeBg = Color(0xFFDCEBFA);
-  static const lowBadgeBg = Color(0xFFFBDADD);
-  static const cardBorder = Color(0xFFE7E7EA);
-  static const trackGrey = Color(0xFFE7E9EC);
-}
+import 'package:saviour/features/home/feature_actions.dart';
 
 // ---------- Data Model ----------
 enum BloodStatus { stable, low, critical }
@@ -65,21 +36,61 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
   int currentNavIndex = 0;
 
   final List<BloodGroupData> bloodGroups = const [
-    BloodGroupData(label: 'A+', units: 24, maxUnits: 50, status: BloodStatus.stable),
-    BloodGroupData(label: 'A-', units: 12, maxUnits: 50, status: BloodStatus.stable),
-    BloodGroupData(label: 'B+', units: 31, maxUnits: 50, status: BloodStatus.stable),
-    BloodGroupData(label: 'B-', units: 5, maxUnits: 50, status: BloodStatus.low),
-    BloodGroupData(label: 'AB+', units: 18, maxUnits: 50, status: BloodStatus.stable),
-    BloodGroupData(label: 'AB-', units: 3, maxUnits: 50, status: BloodStatus.low),
-    BloodGroupData(label: 'O+', units: 48, maxUnits: 50, status: BloodStatus.stable),
-    BloodGroupData(label: 'O-', units: 1, maxUnits: 50, status: BloodStatus.critical),
+    BloodGroupData(
+      label: 'A+',
+      units: 24,
+      maxUnits: 50,
+      status: BloodStatus.stable,
+    ),
+    BloodGroupData(
+      label: 'A-',
+      units: 12,
+      maxUnits: 50,
+      status: BloodStatus.stable,
+    ),
+    BloodGroupData(
+      label: 'B+',
+      units: 31,
+      maxUnits: 50,
+      status: BloodStatus.stable,
+    ),
+    BloodGroupData(
+      label: 'B-',
+      units: 5,
+      maxUnits: 50,
+      status: BloodStatus.low,
+    ),
+    BloodGroupData(
+      label: 'AB+',
+      units: 18,
+      maxUnits: 50,
+      status: BloodStatus.stable,
+    ),
+    BloodGroupData(
+      label: 'AB-',
+      units: 3,
+      maxUnits: 50,
+      status: BloodStatus.low,
+    ),
+    BloodGroupData(
+      label: 'O+',
+      units: 48,
+      maxUnits: 50,
+      status: BloodStatus.stable,
+    ),
+    BloodGroupData(
+      label: 'O-',
+      units: 1,
+      maxUnits: 50,
+      status: BloodStatus.critical,
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       body: SafeArea(
-        child: ListView(
+        child: PlatformListView(
           padding: const EdgeInsets.only(bottom: 24),
           children: [
             _buildTopBar(),
@@ -94,13 +105,16 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black,
+                      color: SaviourPalette.shade950,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Central Blood Bank - Station 04',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: SaviourPalette.shade600,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   _buildVisibilityToggle(),
@@ -141,28 +155,34 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black87),
-            onPressed: () {},
+          NativeIconButton(
+            icon: const Icon(Icons.menu, color: SaviourPalette.shade950),
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
           const Spacer(),
           const Text(
             'Vital Reserve',
             style: TextStyle(
-              color: AppColors.red,
+              color: SaviourPalette.shade800,
               fontWeight: FontWeight.w800,
               fontSize: 18,
             ),
           ),
           const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Colors.black87),
-            onPressed: () {},
+          NativeIconButton(
+            icon: const Icon(
+              Icons.notifications_none,
+              color: SaviourPalette.shade950,
+            ),
+            onPressed: () => FeatureActions.notice(
+              context,
+              'Inventory alerts are up to date.',
+            ),
           ),
-          const CircleAvatar(
+          const NativeAvatar(
             radius: 16,
-            backgroundColor: AppColors.blue,
-            child: Icon(Icons.person, size: 18, color: Colors.white),
+            backgroundColor: SaviourPalette.shade800,
+            child: Icon(Icons.person, size: 18, color: SaviourPalette.shade50),
           ),
         ],
       ),
@@ -174,9 +194,9 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: SaviourPalette.shade200),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,10 +205,10 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
             'Public Visibility',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
           ),
-          Switch(
+          NativeSwitch(
             value: publicVisibility,
-            activeThumbColor: Colors.white,
-            activeTrackColor: AppColors.blue,
+            activeThumbColor: SaviourPalette.shade50,
+            activeTrackColor: SaviourPalette.shade800,
             onChanged: (v) => setState(() => publicVisibility = v),
           ),
         ],
@@ -201,20 +221,26 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
     return SizedBox(
       width: double.infinity,
       height: 56,
-      child: ElevatedButton.icon(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.red,
+      child: NativeElevatedButton.icon(
+        onPressed: () => FeatureActions.notice(
+          context,
+          'A new blood inventory entry can now be recorded.',
+        ),
+        style: NativeElevatedButton.styleFrom(
+          backgroundColor: SaviourPalette.shade800,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
           elevation: 0,
         ),
-        icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+        icon: const Icon(
+          Icons.add_circle_outline,
+          color: SaviourPalette.shade50,
+        ),
         label: const Text(
           'Add/Update Inventory',
           style: TextStyle(
-            color: Colors.white,
+            color: SaviourPalette.shade50,
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -229,20 +255,23 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.criticalBg,
+        color: SaviourPalette.shade100,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.criticalBorder),
+        border: Border.all(color: SaviourPalette.shade300),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: SaviourPalette.shade50,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.warning_amber_rounded,
-                color: AppColors.red, size: 20),
+            child: const Icon(
+              Icons.warning_amber_rounded,
+              color: SaviourPalette.shade800,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 12),
           Column(
@@ -251,7 +280,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
               Text(
                 'CRITICAL SHORTAGE',
                 style: TextStyle(
-                  color: AppColors.red,
+                  color: SaviourPalette.shade800,
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
                   letterSpacing: 0.5,
@@ -263,7 +292,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
                   fontSize: 18,
-                  color: Colors.black,
+                  color: SaviourPalette.shade950,
                 ),
               ),
             ],
@@ -277,7 +306,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
   Widget _buildNextSyncCard() {
     return _infoCard(
       icon: Icons.sync,
-      iconColor: AppColors.blue,
+      iconColor: SaviourPalette.shade800,
       label: 'NEXT SYNC',
       value: 'In 14 minutes',
     );
@@ -287,7 +316,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
   Widget _buildDailyUsageCard() {
     return _infoCard(
       icon: Icons.assignment_outlined,
-      iconColor: AppColors.blue,
+      iconColor: SaviourPalette.shade800,
       label: 'DAILY USAGE',
       value: '42 Units Used',
     );
@@ -303,16 +332,18 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.blue.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: SaviourPalette.shade800.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.lightBlueBg,
+              color: SaviourPalette.shade100,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: iconColor, size: 20),
@@ -324,7 +355,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
               Text(
                 label,
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: SaviourPalette.shade600,
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
                   letterSpacing: 0.5,
@@ -336,7 +367,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                 style: const TextStyle(
                   fontWeight: FontWeight.w800,
                   fontSize: 18,
-                  color: Colors.black,
+                  color: SaviourPalette.shade950,
                 ),
               ),
             ],
@@ -357,9 +388,9 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
         ),
         Row(
           children: [
-            _legendDot(AppColors.red, 'Critical'),
+            _legendDot(SaviourPalette.shade800, 'Critical'),
             const SizedBox(width: 12),
-            _legendDot(AppColors.blue, 'Stable'),
+            _legendDot(SaviourPalette.shade800, 'Stable'),
           ],
         ),
       ],
@@ -375,7 +406,10 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 12, color: SaviourPalette.shade700),
+        ),
       ],
     );
   }
@@ -400,13 +434,17 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
     final isCritical = data.status == BloodStatus.critical;
     final isLow = data.status == BloodStatus.low;
 
-    final borderColor = isCritical ? AppColors.red : AppColors.cardBorder;
-    final progressColor = isCritical || isLow ? AppColors.red : AppColors.blue;
+    final borderColor = isCritical
+        ? SaviourPalette.shade800
+        : SaviourPalette.shade200;
+    final progressColor = isCritical || isLow
+        ? SaviourPalette.shade800
+        : SaviourPalette.shade800;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: borderColor, width: isCritical ? 1.4 : 1),
       ),
@@ -419,7 +457,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
               Text(
                 data.label,
                 style: const TextStyle(
-                  color: AppColors.red,
+                  color: SaviourPalette.shade800,
                   fontWeight: FontWeight.w800,
                   fontSize: 22,
                 ),
@@ -434,7 +472,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                 TextSpan(
                   text: '${data.units}',
                   style: const TextStyle(
-                    color: Colors.black,
+                    color: SaviourPalette.shade950,
                     fontWeight: FontWeight.w800,
                     fontSize: 22,
                   ),
@@ -442,7 +480,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                 TextSpan(
                   text: data.units == 1 ? ' Unit' : ' Units',
                   style: TextStyle(
-                    color: Colors.grey.shade600,
+                    color: SaviourPalette.shade600,
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
@@ -453,23 +491,27 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
           const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
+            child: PlatformLinearProgressIndicator(
               value: data.fraction,
-              minHeight: 6,
-              backgroundColor: AppColors.trackGrey,
-              valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+              height: 6,
+              backgroundColor: SaviourPalette.shade200,
+              color: progressColor,
             ),
           ),
           if (isCritical) ...[
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.campaign_outlined, size: 13, color: AppColors.red),
+                Icon(
+                  Icons.campaign_outlined,
+                  size: 13,
+                  color: SaviourPalette.shade800,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Broadcast Sent',
                   style: TextStyle(
-                    color: AppColors.red,
+                    color: SaviourPalette.shade800,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
@@ -490,18 +532,18 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
     switch (status) {
       case BloodStatus.stable:
         text = 'Stable';
-        bg = AppColors.stableBadgeBg;
-        fg = AppColors.blue;
+        bg = SaviourPalette.shade200;
+        fg = SaviourPalette.shade800;
         break;
       case BloodStatus.low:
         text = 'Low';
-        bg = AppColors.lowBadgeBg;
-        fg = AppColors.red;
+        bg = SaviourPalette.shade200;
+        fg = SaviourPalette.shade800;
         break;
       case BloodStatus.critical:
         text = 'CRITICAL';
-        bg = AppColors.red;
-        fg = Colors.white;
+        bg = SaviourPalette.shade800;
+        fg = SaviourPalette.shade50;
         break;
     }
 
@@ -513,11 +555,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
       ),
       child: Text(
         text,
-        style: TextStyle(
-          color: fg,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-        ),
+        style: TextStyle(color: fg, fontSize: 10, fontWeight: FontWeight.w700),
       ),
     );
   }
@@ -528,9 +566,9 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: SaviourPalette.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -544,15 +582,18 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                   letterSpacing: 0.5,
-                  color: Colors.black87,
+                  color: SaviourPalette.shade950,
                 ),
               ),
-              GestureDetector(
-                onTap: () {},
+              PlatformGestureSurface(
+                onTap: () => FeatureActions.notice(
+                  context,
+                  'Opening the complete audited inventory log.',
+                ),
                 child: Text(
                   'View Log',
                   style: TextStyle(
-                    color: AppColors.blue,
+                    color: SaviourPalette.shade800,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -563,8 +604,8 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
           const SizedBox(height: 12),
           _transferRow(
             icon: Icons.arrow_upward_rounded,
-            iconColor: AppColors.red,
-            iconBg: AppColors.criticalBg,
+            iconColor: SaviourPalette.shade800,
+            iconBg: SaviourPalette.shade100,
             title: 'O- Transferred (2 Units)',
             subtitle: 'To: Emergency Ward A',
             time: '12m ago',
@@ -572,8 +613,8 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
           const Divider(height: 24),
           _transferRow(
             icon: Icons.arrow_downward_rounded,
-            iconColor: AppColors.blue,
-            iconBg: AppColors.lightBlueBg,
+            iconColor: SaviourPalette.shade800,
+            iconBg: SaviourPalette.shade100,
             title: 'A+ Received (10 Units)',
             subtitle: 'From: Regional Depot',
             time: '1h ago',
@@ -603,18 +644,28 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700, fontSize: 14)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+              ),
               const SizedBox(height: 2),
-              Text(subtitle,
-                  style: TextStyle(
-                      fontSize: 12.5, color: Colors.grey.shade600)),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  color: SaviourPalette.shade600,
+                ),
+              ),
             ],
           ),
         ),
-        Text(time,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+        Text(
+          time,
+          style: TextStyle(fontSize: 12, color: SaviourPalette.shade500),
+        ),
       ],
     );
   }
@@ -630,14 +681,17 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF2B2B2E), Color(0xFF565659)],
+                colors: [SaviourPalette.shade900, SaviourPalette.shade700],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
             child: Center(
-              child: Icon(Icons.kitchen,
-                  size: 64, color: Colors.white.withValues(alpha: 0.25)),
+              child: Icon(
+                Icons.kitchen,
+                size: 64,
+                color: SaviourPalette.shade50.withValues(alpha: 0.25),
+              ),
             ),
           ),
           Positioned(
@@ -647,7 +701,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.55),
+                color: SaviourPalette.shade950.withValues(alpha: 0.55),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -658,7 +712,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                       Text(
                         'TOTAL STORAGE CAPACITY',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: SaviourPalette.shade100,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
@@ -668,7 +722,7 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                       Text(
                         '182 / 400 Units',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: SaviourPalette.shade50,
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
                         ),
@@ -678,12 +732,12 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
                   SizedBox(
                     width: 34,
                     height: 34,
-                    child: CircularProgressIndicator(
+                    child: PlatformCircularProgressIndicator(
                       value: 182 / 400,
+                      size: 34,
                       strokeWidth: 4,
-                      backgroundColor: Colors.white24,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppColors.blue),
+                      backgroundColor: SaviourPalette.shade200,
+                      color: SaviourPalette.shade800,
                     ),
                   ),
                 ],
@@ -697,21 +751,27 @@ class _InventoryHomePageState extends State<InventoryHomePage> {
 
   // ---------- Bottom Navigation ----------
   Widget _buildBottomNav() {
-    return BottomNavigationBar(
+    return NativeBottomNavigationBar(
       currentIndex: currentNavIndex,
       onTap: (i) => setState(() => currentNavIndex = i),
-      selectedItemColor: AppColors.red,
-      unselectedItemColor: Colors.grey.shade500,
+      selectedItemColor: SaviourPalette.shade800,
+      unselectedItemColor: SaviourPalette.shade500,
       type: BottomNavigationBarType.fixed,
       showUnselectedLabels: true,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
         BottomNavigationBarItem(
-            icon: Icon(Icons.water_drop_outlined), label: 'Stock'),
+          icon: Icon(Icons.water_drop_outlined),
+          label: 'Stock',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.location_on_outlined), label: 'Camps'),
+          icon: Icon(Icons.location_on_outlined),
+          label: 'Camps',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline), label: 'Profile'),
+          icon: Icon(Icons.person_outline),
+          label: 'Profile',
+        ),
       ],
     );
   }

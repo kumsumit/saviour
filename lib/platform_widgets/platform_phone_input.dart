@@ -1,3 +1,4 @@
+import 'package:saviour/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -51,8 +52,10 @@ class PlatformPhoneNumberInput extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final effectiveHintColor = hintColor ?? Colors.grey.withValues(alpha: 0.7);
-    final effectiveIconColor = iconColor ?? Colors.grey.withValues(alpha: 0.7);
+    final effectiveHintColor =
+        hintColor ?? SaviourPalette.shade500.withValues(alpha: 0.7);
+    final effectiveIconColor =
+        iconColor ?? SaviourPalette.shade500.withValues(alpha: 0.7);
     final effectiveDividerColor =
         dividerColor ?? Theme.of(context).colorScheme.outlineVariant;
     final theme = Theme.of(context);
@@ -253,7 +256,8 @@ class PlatformPhoneNumberInput extends ConsumerWidget {
         borderRadius: effectiveBorderRadius,
         boxShadow: [
           BoxShadow(
-            color: shadowColor ?? Colors.black.withValues(alpha: 0.05),
+            color:
+                shadowColor ?? SaviourPalette.shade950.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

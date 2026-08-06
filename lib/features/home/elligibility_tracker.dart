@@ -1,44 +1,15 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_list.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-
-void main() {
-  runApp(const VitalReserveApp());
-}
-
-class VitalReserveApp extends StatelessWidget {
-  const VitalReserveApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vital Reserve',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF5F5F7),
-        fontFamily: 'Roboto',
-        useMaterial3: true,
-      ),
-      home: const EligibilityScreen(),
-    );
-  }
-}
+import 'package:saviour/features/home/feature_actions.dart';
+import 'package:saviour/features/home/vital_reserve.dart';
 
 // ---------------------------------------------------------------------------
 // Color palette (matched to the design)
 // ---------------------------------------------------------------------------
-class AppColors {
-  static const crimson = Color(0xFFC22141); // brand red / buttons / ring / banner
-  static const crimsonDark = Color(0xFFA81834);
-  static const pendingBg = Color(0xFFF7D9DE);
-  static const ringTrack = Color(0xFFE6E6E8);
-  static const cardBorder = Color(0xFFEFEFEF);
-  static const bodyGrey = Color(0xFF6B6B6B);
-  static const iconBoxBg = Color(0xFFD9EAF5);
-  static const iconBoxIcon = Color(0xFF1F6FA8);
-  static const checkGreen = Color(0xFF2E9A5B);
-  static const clockBlue = Color(0xFF4A90D9);
-}
-
 // ---------------------------------------------------------------------------
 // Screen
 // ---------------------------------------------------------------------------
@@ -47,9 +18,9 @@ class EligibilityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       appBar: const VitalAppBar(),
-      body: ListView(
+      body: PlatformListView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         children: const [
           StatusRingCard(),
@@ -83,31 +54,37 @@ class VitalAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.white,
+    return NativeAppBar(
+      backgroundColor: SaviourPalette.shade50,
       elevation: 0,
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.menu, color: AppColors.crimson),
-        onPressed: () {},
+      leading: NativeIconButton(
+        icon: const Icon(Icons.menu, color: SaviourPalette.seed),
+        onPressed: () => Navigator.of(context).maybePop(),
       ),
       title: const Text(
         'Vital Reserve',
         style: TextStyle(
-          color: AppColors.crimson,
+          color: SaviourPalette.seed,
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications_none, color: AppColors.crimson),
-          onPressed: () {},
+        NativeIconButton(
+          icon: const Icon(
+            Icons.notifications_none,
+            color: SaviourPalette.seed,
+          ),
+          onPressed: () => FeatureActions.notice(
+            context,
+            'Your eligibility reminders are enabled.',
+          ),
         ),
       ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
-        child: Container(color: Colors.grey.shade200, height: 1),
+        child: Container(color: SaviourPalette.shade200, height: 1),
       ),
     );
   }
@@ -125,9 +102,9 @@ class StatusRingCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: SaviourPalette.shade100),
       ),
       child: Column(
         children: [
@@ -135,13 +112,13 @@ class StatusRingCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.pendingBg,
+              color: SaviourPalette.shade200,
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
               'STATUS: PENDING',
               style: TextStyle(
-                color: AppColors.crimsonDark,
+                color: SaviourPalette.shade800,
                 fontWeight: FontWeight.w700,
                 fontSize: 12,
                 letterSpacing: 0.5,
@@ -155,7 +132,7 @@ class StatusRingCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: SaviourPalette.shade950,
               height: 1.2,
             ),
           ),
@@ -164,7 +141,7 @@ class StatusRingCard extends StatelessWidget {
             "You're doing great! Your body is replenishing its red blood cell levels for your next life-saving gift.",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.grey.shade600,
+              color: SaviourPalette.shade600,
               fontSize: 14,
               height: 1.4,
             ),
@@ -204,13 +181,13 @@ class ReadyRing extends StatelessWidget {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 34,
-                  color: AppColors.crimson,
+                  color: SaviourPalette.seed,
                 ),
               ),
               Text(
                 'Ready',
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: SaviourPalette.shade600,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -234,13 +211,13 @@ class _RingPainter extends CustomPainter {
     final radius = (size.width - strokeWidth) / 2;
 
     final trackPaint = Paint()
-      ..color = AppColors.ringTrack
+      ..color = SaviourPalette.shade200
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.butt;
 
     final progressPaint = Paint()
-      ..color = AppColors.crimson
+      ..color = SaviourPalette.seed
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.butt;
@@ -259,7 +236,8 @@ class _RingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _RingPainter oldDelegate) => oldDelegate.percent != percent;
+  bool shouldRepaint(covariant _RingPainter oldDelegate) =>
+      oldDelegate.percent != percent;
 }
 
 // ---------------------------------------------------------------------------
@@ -273,9 +251,9 @@ class LastDonationCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: SaviourPalette.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,13 +264,13 @@ class LastDonationCard extends StatelessWidget {
               Text(
                 'LAST DONATION',
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: SaviourPalette.shade600,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                   letterSpacing: 0.5,
                 ),
               ),
-              const Icon(Icons.history, size: 20, color: AppColors.crimson),
+              const Icon(Icons.history, size: 20, color: SaviourPalette.seed),
             ],
           ),
           const SizedBox(height: 12),
@@ -302,10 +280,14 @@ class LastDonationCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.iconBoxBg,
+                  color: SaviourPalette.shade200,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.water_drop, color: AppColors.iconBoxIcon, size: 22),
+                child: const Icon(
+                  Icons.water_drop,
+                  color: SaviourPalette.shade600,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 12),
               const Column(
@@ -318,7 +300,10 @@ class LastDonationCard extends StatelessWidget {
                   SizedBox(height: 2),
                   Text(
                     'Sept 24, 2023 • Mercy Central',
-                    style: TextStyle(color: Colors.grey, fontSize: 13),
+                    style: TextStyle(
+                      color: SaviourPalette.shade500,
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),
@@ -342,7 +327,7 @@ class BloodTypeBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColors.crimson,
+        color: SaviourPalette.seed,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -351,7 +336,7 @@ class BloodTypeBanner extends StatelessWidget {
           Text(
             'BLOOD TYPE',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: SaviourPalette.shade50.withValues(alpha: 0.85),
               fontWeight: FontWeight.w700,
               fontSize: 12,
               letterSpacing: 0.5,
@@ -364,7 +349,7 @@ class BloodTypeBanner extends StatelessWidget {
               const Text(
                 'O-',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: SaviourPalette.shade50,
                   fontWeight: FontWeight.bold,
                   fontSize: 32,
                 ),
@@ -373,7 +358,7 @@ class BloodTypeBanner extends StatelessWidget {
               Text(
                 'Universal Donor',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: SaviourPalette.shade50.withValues(alpha: 0.9),
                   fontSize: 15,
                 ),
               ),
@@ -394,14 +379,34 @@ class ChecklistItem {
   final IconData icon;
   final String label;
   final ChecklistStatus status;
-  const ChecklistItem({required this.icon, required this.label, required this.status});
+  const ChecklistItem({
+    required this.icon,
+    required this.label,
+    required this.status,
+  });
 }
 
 const List<ChecklistItem> checklistItems = [
-  ChecklistItem(icon: Icons.shield_outlined, label: 'Age (18-65 years)', status: ChecklistStatus.done),
-  ChecklistItem(icon: Icons.monitor_weight_outlined, label: 'Weight (Min 50kg)', status: ChecklistStatus.done),
-  ChecklistItem(icon: Icons.favorite_border, label: 'General Health', status: ChecklistStatus.done),
-  ChecklistItem(icon: Icons.public, label: 'Recent Travel', status: ChecklistStatus.pending),
+  ChecklistItem(
+    icon: Icons.shield_outlined,
+    label: 'Age (18-65 years)',
+    status: ChecklistStatus.done,
+  ),
+  ChecklistItem(
+    icon: Icons.monitor_weight_outlined,
+    label: 'Weight (Min 50kg)',
+    status: ChecklistStatus.done,
+  ),
+  ChecklistItem(
+    icon: Icons.favorite_border,
+    label: 'General Health',
+    status: ChecklistStatus.done,
+  ),
+  ChecklistItem(
+    icon: Icons.public,
+    label: 'Recent Travel',
+    status: ChecklistStatus.pending,
+  ),
 ];
 
 class EligibilityChecklistCard extends StatelessWidget {
@@ -412,9 +417,9 @@ class EligibilityChecklistCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: SaviourPalette.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,7 +437,7 @@ class EligibilityChecklistCard extends StatelessWidget {
           Text(
             'Note: This is a preliminary tracker. Final eligibility will be determined by medical staff at the donation site.',
             style: TextStyle(
-              color: Colors.grey.shade600,
+              color: SaviourPalette.shade600,
               fontSize: 12.5,
               fontStyle: FontStyle.italic,
               height: 1.4,
@@ -453,18 +458,21 @@ class ChecklistRow extends StatelessWidget {
     final isDone = item.status == ChecklistStatus.done;
     return Row(
       children: [
-        Icon(item.icon, size: 20, color: AppColors.crimson),
+        Icon(item.icon, size: 20, color: SaviourPalette.seed),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             item.label,
-            style: const TextStyle(fontSize: 15, color: Colors.black87),
+            style: const TextStyle(
+              fontSize: 15,
+              color: SaviourPalette.shade950,
+            ),
           ),
         ),
         Icon(
           isDone ? Icons.check_circle : Icons.access_time_filled,
           size: 20,
-          color: isDone ? AppColors.checkGreen : AppColors.clockBlue,
+          color: isDone ? SaviourPalette.shade500 : SaviourPalette.shade500,
         ),
       ],
     );
@@ -481,18 +489,29 @@ class FindCampButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.crimson,
+      child: NativeElevatedButton.icon(
+        onPressed: () =>
+            FeatureActions.open(context, const VitalReserveHomeScreen()),
+        style: NativeElevatedButton.styleFrom(
+          backgroundColor: SaviourPalette.seed,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
           elevation: 0,
         ),
-        icon: const Icon(Icons.location_on, color: Colors.white, size: 20),
+        icon: const Icon(
+          Icons.location_on,
+          color: SaviourPalette.shade50,
+          size: 20,
+        ),
         label: const Text(
           'Find a Donation Camp',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
+          style: TextStyle(
+            color: SaviourPalette.shade50,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
         ),
       ),
     );
@@ -506,17 +525,36 @@ class ScheduleAppointmentButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColors.crimson, width: 1.4),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      child: NativeOutlinedButton.icon(
+        onPressed: () => FeatureActions.confirm(
+          context: context,
+          title: 'Schedule a donation?',
+          message: 'We will reserve the next suitable verified appointment.',
+          actionLabel: 'Schedule',
+          onConfirmed: () => FeatureActions.notice(
+            context,
+            'Your appointment request has been submitted.',
+          ),
         ),
-        icon: const Icon(Icons.calendar_today, color: AppColors.crimson, size: 18),
+        style: NativeOutlinedButton.styleFrom(
+          side: const BorderSide(color: SaviourPalette.seed, width: 1.4),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+        ),
+        icon: const Icon(
+          Icons.calendar_today,
+          color: SaviourPalette.seed,
+          size: 18,
+        ),
         label: const Text(
           'Schedule Appointment',
-          style: TextStyle(color: AppColors.crimson, fontWeight: FontWeight.w600, fontSize: 16),
+          style: TextStyle(
+            color: SaviourPalette.seed,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
         ),
       ),
     );
@@ -541,13 +579,17 @@ class QuoteImageBanner extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.grey.shade900, Colors.grey.shade800],
+                colors: [SaviourPalette.shade900, SaviourPalette.shade800],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
             child: const Center(
-              child: Icon(Icons.biotech, color: Colors.white24, size: 60),
+              child: Icon(
+                Icons.biotech,
+                color: SaviourPalette.shade200,
+                size: 60,
+              ),
             ),
           ),
           // Dark gradient overlay so the quote text stays legible
@@ -555,7 +597,10 @@ class QuoteImageBanner extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.75)],
+                  colors: [
+                    SaviourPalette.transparent,
+                    SaviourPalette.shade950.withValues(alpha: 0.75),
+                  ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -569,11 +614,16 @@ class QuoteImageBanner extends StatelessWidget {
             child: Text(
               '"Your single donation can save up to three lives."',
               style: TextStyle(
-                color: Colors.white,
+                color: SaviourPalette.shade50,
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
                 height: 1.3,
-                shadows: [Shadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 4)],
+                shadows: [
+                  Shadow(
+                    color: SaviourPalette.shade950.withValues(alpha: 0.4),
+                    blurRadius: 4,
+                  ),
+                ],
               ),
             ),
           ),
@@ -607,8 +657,8 @@ class _VitalBottomNavState extends State<VitalBottomNav> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        color: SaviourPalette.shade50,
+        border: Border(top: BorderSide(color: SaviourPalette.shade200)),
       ),
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: SafeArea(
@@ -618,13 +668,18 @@ class _VitalBottomNavState extends State<VitalBottomNav> {
           children: List.generate(_items.length, (index) {
             final selected = index == _selectedIndex;
             final item = _items[index];
-            return GestureDetector(
+            return PlatformGestureSurface(
               onTap: () => setState(() => _selectedIndex = index),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
-                  color: selected ? AppColors.crimson : Colors.transparent,
+                  color: selected
+                      ? SaviourPalette.seed
+                      : SaviourPalette.transparent,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
@@ -632,15 +687,21 @@ class _VitalBottomNavState extends State<VitalBottomNav> {
                   children: [
                     Icon(
                       item.icon,
-                      color: selected ? Colors.white : Colors.grey.shade600,
+                      color: selected
+                          ? SaviourPalette.shade50
+                          : SaviourPalette.shade600,
                       size: 20,
                     ),
                     const SizedBox(height: 2),
                     Text(
                       item.label,
                       style: TextStyle(
-                        color: selected ? Colors.white : Colors.grey.shade600,
-                        fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+                        color: selected
+                            ? SaviourPalette.shade50
+                            : SaviourPalette.shade600,
+                        fontWeight: selected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                         fontSize: 12,
                       ),
                     ),

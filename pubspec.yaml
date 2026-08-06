@@ -16,6 +16,7 @@ dependencies:
   flutter_native_splash: 
     git: https://github.com/sumitsharansatsangi/flutter_native_splash.git
   intl: ^0.20.3
+  http: ^1.5.0
   intl_phone_number_input:
     git: https://github.com/kumsumit/intl_phone_number_input.git
   macos_ui:

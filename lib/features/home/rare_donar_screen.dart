@@ -1,36 +1,9 @@
+import 'package:saviour/app_theme.dart';
+import 'package:saviour/platform_widgets/platform_list.dart';
+import 'package:saviour/platform_widgets/platform_native_controls.dart';
+import 'package:saviour/platform_widgets/platform_interaction.dart';
 import 'package:flutter/material.dart';
-
-void main() => runApp(const VitalReserveApp());
-
-class VitalReserveApp extends StatelessWidget {
-  const VitalReserveApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vital Reserve',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF5F6F8),
-        useMaterial3: true,
-      ),
-      home: const RareDonorPage(),
-    );
-  }
-}
-
-// ---------- Colors ----------
-class AppColors {
-  static const red = Color(0xFFB71C2C);
-  static const darkRed = Color(0xFF8E1622);
-  static const blue = Color(0xFF1D5FA6);
-  static const gold = Color(0xFFC9A24B);
-  static const cardBorder = Color(0xFFE7E7EA);
-  static const alertBg = Color(0xFFFBDCDE);
-  static const alertBorder = Color(0xFFF3C0C4);
-  static const trackGrey = Color(0xFFE7E9EC);
-}
+import 'package:saviour/features/home/feature_actions.dart';
 
 // ---------- Data Models ----------
 class DonorContact {
@@ -111,11 +84,11 @@ class _RareDonorPageState extends State<RareDonorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NativeScaffold(
       body: Stack(
         children: [
           SafeArea(
-            child: ListView(
+            child: PlatformListView(
               padding: const EdgeInsets.only(bottom: 24),
               children: [
                 _buildTopBar(),
@@ -134,21 +107,27 @@ class _RareDonorPageState extends State<RareDonorPage> {
                       const SizedBox(height: 24),
                       _buildDirectoryHeader(),
                       const SizedBox(height: 12),
-                      ...donors.map((d) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _donorTile(d),
-                          )),
+                      ...donors.map(
+                        (d) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _donorTile(d),
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       const Text(
                         'Recent Contributions',
-                        style:
-                            TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                       const SizedBox(height: 12),
-                      ...contributions.map((c) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _contributionTile(c),
-                          )),
+                      ...contributions.map(
+                        (c) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _contributionTile(c),
+                        ),
+                      ),
                       const SizedBox(height: 60),
                     ],
                   ),
@@ -159,10 +138,16 @@ class _RareDonorPageState extends State<RareDonorPage> {
           Positioned(
             right: 20,
             bottom: 90,
-            child: FloatingActionButton(
-              backgroundColor: AppColors.red,
-              onPressed: () {},
-              child: const Icon(Icons.location_on_outlined, color: Colors.white),
+            child: NativeFloatingActionButton(
+              backgroundColor: SaviourPalette.shade800,
+              onPressed: () => FeatureActions.notice(
+                context,
+                'Showing rare donors nearest to your current location.',
+              ),
+              child: const Icon(
+                Icons.location_on_outlined,
+                color: SaviourPalette.shade50,
+              ),
             ),
           ),
         ],
@@ -177,23 +162,29 @@ class _RareDonorPageState extends State<RareDonorPage> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black87),
-            onPressed: () {},
+          NativeIconButton(
+            icon: const Icon(Icons.menu, color: SaviourPalette.shade950),
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
           const Spacer(),
           const Text(
             'Vital Reserve',
             style: TextStyle(
-              color: AppColors.red,
+              color: SaviourPalette.shade800,
               fontWeight: FontWeight.w800,
               fontSize: 18,
             ),
           ),
           const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Colors.black87),
-            onPressed: () {},
+          NativeIconButton(
+            icon: const Icon(
+              Icons.notifications_none,
+              color: SaviourPalette.shade950,
+            ),
+            onPressed: () => FeatureActions.notice(
+              context,
+              'You are all caught up on rare-donor alerts.',
+            ),
           ),
           const SizedBox(width: 8),
         ],
@@ -210,9 +201,11 @@ class _RareDonorPageState extends State<RareDonorPage> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.gold.withValues(alpha: 0.6)),
+          border: Border.all(
+            color: SaviourPalette.shade400.withValues(alpha: 0.6),
+          ),
           gradient: const LinearGradient(
-            colors: [Color(0xFF2A2A28), Color(0xFF17171B)],
+            colors: [SaviourPalette.shade900, SaviourPalette.shade950],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -223,14 +216,16 @@ class _RareDonorPageState extends State<RareDonorPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: AppColors.gold.withValues(alpha: 0.18),
+                color: SaviourPalette.shade400.withValues(alpha: 0.18),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.gold.withValues(alpha: 0.6)),
+                border: Border.all(
+                  color: SaviourPalette.shade400.withValues(alpha: 0.6),
+                ),
               ),
               child: const Text(
                 'RARE DONOR CLUB • ELITE',
                 style: TextStyle(
-                  color: AppColors.gold,
+                  color: SaviourPalette.shade400,
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.6,
@@ -241,7 +236,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
             const Text(
               'Rh-Null (Golden\nBlood)',
               style: TextStyle(
-                color: Colors.white,
+                color: SaviourPalette.shade50,
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
                 height: 1.15,
@@ -251,7 +246,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
             Text(
               'Your blood type is shared by fewer than 50 people worldwide. Your presence on this platform is vital for global healthcare resilience.',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.75),
+                color: SaviourPalette.shade50.withValues(alpha: 0.75),
                 fontSize: 13.5,
                 height: 1.4,
               ),
@@ -261,9 +256,11 @@ class _RareDonorPageState extends State<RareDonorPage> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.06),
+                color: SaviourPalette.shade50.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                border: Border.all(
+                  color: SaviourPalette.shade50.withValues(alpha: 0.12),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +268,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
                   Text(
                     'GLOBAL PRIORITY ID',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: SaviourPalette.shade50.withValues(alpha: 0.5),
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.6,
@@ -281,7 +278,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
                   const Text(
                     'VR-992-ALPHA',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: SaviourPalette.shade50,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -297,8 +294,10 @@ class _RareDonorPageState extends State<RareDonorPage> {
                           margin: EdgeInsets.only(right: i == 3 ? 0 : 6),
                           decoration: BoxDecoration(
                             color: active
-                                ? AppColors.gold
-                                : Colors.white.withValues(alpha: 0.15),
+                                ? SaviourPalette.shade400
+                                : SaviourPalette.shade50.withValues(
+                                    alpha: 0.15,
+                                  ),
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -320,21 +319,25 @@ class _RareDonorPageState extends State<RareDonorPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColors.alertBg,
+        color: SaviourPalette.shade200,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.alertBorder),
+        border: Border.all(color: SaviourPalette.shade300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome, size: 16, color: AppColors.darkRed),
+              const Icon(
+                Icons.auto_awesome,
+                size: 16,
+                color: SaviourPalette.shade900,
+              ),
               const SizedBox(width: 6),
               Text(
                 'CRITICAL MATCH ALERT',
                 style: TextStyle(
-                  color: AppColors.darkRed,
+                  color: SaviourPalette.shade900,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                   letterSpacing: 0.4,
@@ -348,14 +351,14 @@ class _RareDonorPageState extends State<RareDonorPage> {
             style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 19,
-              color: Colors.black,
+              color: SaviourPalette.shade950,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'A patient undergoing emergency cardiovascular surgery requires Rh-Null units. High-priority transport is authorized.',
             style: TextStyle(
-              color: Colors.grey.shade800,
+              color: SaviourPalette.shade800,
               fontSize: 13.5,
               height: 1.4,
             ),
@@ -364,10 +367,20 @@ class _RareDonorPageState extends State<RareDonorPage> {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.red,
+            child: NativeElevatedButton(
+              onPressed: () => FeatureActions.confirm(
+                context: context,
+                title: 'Contact rare donor network?',
+                message:
+                    'A verified coordinator will protect donor contact details until both parties confirm.',
+                actionLabel: 'Contact',
+                onConfirmed: () => FeatureActions.notice(
+                  context,
+                  'The rare donor coordinator has been notified.',
+                ),
+              ),
+              style: NativeElevatedButton.styleFrom(
+                backgroundColor: SaviourPalette.shade800,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -379,13 +392,17 @@ class _RareDonorPageState extends State<RareDonorPage> {
                   Text(
                     'Coordinate Donation',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: SaviourPalette.shade50,
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                     ),
                   ),
                   SizedBox(width: 8),
-                  Icon(Icons.arrow_forward, color: Colors.white, size: 18),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: SaviourPalette.shade50,
+                    size: 18,
+                  ),
                 ],
               ),
             ),
@@ -401,9 +418,9 @@ class _RareDonorPageState extends State<RareDonorPage> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: SaviourPalette.shade200),
       ),
       child: Column(
         children: [
@@ -416,12 +433,12 @@ class _RareDonorPageState extends State<RareDonorPage> {
                 SizedBox(
                   width: 78,
                   height: 78,
-                  child: CircularProgressIndicator(
+                  child: PlatformCircularProgressIndicator(
                     value: 12 / 30,
+                    size: 78,
                     strokeWidth: 6,
-                    backgroundColor: AppColors.trackGrey,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(AppColors.blue),
+                    backgroundColor: SaviourPalette.shade200,
+                    color: SaviourPalette.shade800,
                   ),
                 ),
                 const Text(
@@ -439,7 +456,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
           const SizedBox(height: 2),
           Text(
             'Until your next safe donation',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+            style: TextStyle(color: SaviourPalette.shade600, fontSize: 13),
           ),
         ],
       ),
@@ -452,9 +469,9 @@ class _RareDonorPageState extends State<RareDonorPage> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: SaviourPalette.shade50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.cardBorder),
+        border: Border.all(color: SaviourPalette.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,10 +479,14 @@ class _RareDonorPageState extends State<RareDonorPage> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.gold.withValues(alpha: 0.15),
+              color: SaviourPalette.shade400.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.star_rounded, color: AppColors.gold, size: 20),
+            child: const Icon(
+              Icons.star_rounded,
+              color: SaviourPalette.shade400,
+              size: 20,
+            ),
           ),
           const SizedBox(height: 12),
           const Text(
@@ -480,7 +501,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
           const SizedBox(height: 2),
           Text(
             'Lifetime direct impact',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 12.5),
+            style: TextStyle(color: SaviourPalette.shade600, fontSize: 12.5),
           ),
         ],
       ),
@@ -504,7 +525,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
               Text(
                 'Connect with your global peer network for support and logistics.',
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: SaviourPalette.shade600,
                   fontSize: 13,
                   height: 1.3,
                 ),
@@ -517,12 +538,16 @@ class _RareDonorPageState extends State<RareDonorPage> {
             Text(
               'View All',
               style: TextStyle(
-                color: AppColors.red,
+                color: SaviourPalette.shade800,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.red, size: 18),
+            const Icon(
+              Icons.chevron_right,
+              color: SaviourPalette.shade800,
+              size: 18,
+            ),
           ],
         ),
       ],
@@ -533,49 +558,54 @@ class _RareDonorPageState extends State<RareDonorPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F1F3),
+        color: SaviourPalette.shade100,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         children: [
-          donor.imageUrl != null
-              ? CircleAvatar(
-                  radius: 22,
-                  backgroundImage: NetworkImage(donor.imageUrl!),
-                )
-              : CircleAvatar(
-                  radius: 22,
-                  backgroundColor: AppColors.red,
-                  child: Text(
-                    donor.initials,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+          NativeAvatar(
+            radius: 22,
+            backgroundColor: SaviourPalette.shade800,
+            child: Text(
+              donor.initials,
+              style: const TextStyle(
+                color: SaviourPalette.shade50,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
           const SizedBox(width: 14),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 donor.name,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 donor.location,
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 12.5),
+                style: TextStyle(
+                  color: SaviourPalette.shade600,
+                  fontSize: 12.5,
+                ),
               ),
               const SizedBox(height: 3),
               Row(
                 children: [
-                  Icon(Icons.verified, size: 12, color: AppColors.blue),
+                  Icon(
+                    Icons.verified,
+                    size: 12,
+                    color: SaviourPalette.shade800,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     'VERIFIED DONOR',
                     style: TextStyle(
-                      color: AppColors.blue,
+                      color: SaviourPalette.shade800,
                       fontSize: 10.5,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.3,
@@ -595,7 +625,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F1F3),
+        color: SaviourPalette.shade100,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -603,11 +633,14 @@ class _RareDonorPageState extends State<RareDonorPage> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: SaviourPalette.shade50,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.water_drop_outlined,
-                color: AppColors.blue, size: 18),
+            child: const Icon(
+              Icons.water_drop_outlined,
+              color: SaviourPalette.shade800,
+              size: 18,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -616,12 +649,18 @@ class _RareDonorPageState extends State<RareDonorPage> {
               children: [
                 Text(
                   c.title,
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   c.date,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12.5),
+                  style: TextStyle(
+                    color: SaviourPalette.shade600,
+                    fontSize: 12.5,
+                  ),
                 ),
               ],
             ),
@@ -632,7 +671,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
               Text(
                 c.volume,
                 style: const TextStyle(
-                  color: AppColors.red,
+                  color: SaviourPalette.shade800,
                   fontWeight: FontWeight.w800,
                   fontSize: 14,
                 ),
@@ -641,7 +680,7 @@ class _RareDonorPageState extends State<RareDonorPage> {
               Text(
                 c.status,
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: SaviourPalette.shade600,
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.3,
@@ -656,21 +695,27 @@ class _RareDonorPageState extends State<RareDonorPage> {
 
   // ---------- Bottom Navigation ----------
   Widget _buildBottomNav() {
-    return BottomNavigationBar(
+    return NativeBottomNavigationBar(
       currentIndex: currentNavIndex,
       onTap: (i) => setState(() => currentNavIndex = i),
-      selectedItemColor: AppColors.red,
-      unselectedItemColor: Colors.grey.shade500,
+      selectedItemColor: SaviourPalette.shade800,
+      unselectedItemColor: SaviourPalette.shade500,
       type: BottomNavigationBarType.fixed,
       showUnselectedLabels: true,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
         BottomNavigationBarItem(
-            icon: Icon(Icons.water_drop_outlined), label: 'Requests'),
+          icon: Icon(Icons.water_drop_outlined),
+          label: 'Requests',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.location_on_outlined), label: 'Camps'),
+          icon: Icon(Icons.location_on_outlined),
+          label: 'Camps',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline), label: 'Profile'),
+          icon: Icon(Icons.person_outline),
+          label: 'Profile',
+        ),
       ],
     );
   }
