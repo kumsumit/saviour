@@ -58,22 +58,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     Image.asset('logo/logo.png', width: 96, height: 96),
                     const SizedBox(height: 24),
                     Text(
-                      'Vital Reserve',
+                      'Saviour',
                       textAlign: TextAlign.center,
                       style: theme.text.headlineMedium?.copyWith(
                         color: theme.onSurface,
                         fontSize: 32,
                         fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Secure access to your life-saving\ncommunity dashboard.',
-                      textAlign: TextAlign.center,
-                      style: theme.text.bodyMedium?.copyWith(
-                        color: theme.onSurfaceVariant,
-                        fontSize: 15,
-                        height: 1.4,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -148,39 +138,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPrivacyPressed: _openPrivacyPolicy,
                           ),
                           const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              const Expanded(child: PlatformDivider()),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                ),
-                                child: Text(
-                                  'NEW DONOR?',
-                                  style: theme.text.labelMedium?.copyWith(
-                                    color: theme.onSurfaceVariant.withValues(
-                                      alpha: 0.7,
-                                    ),
-                                    fontSize: 11,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                              ),
-                              const Expanded(child: PlatformDivider()),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Center(
-                            child: PlatformButton(
-                              kind: PlatformButtonKind.text,
-                              onPressed: _register,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              child: const Text('Register as a new donor'),
-                            ),
-                          ),
                         ],
                       ),
                     ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' show ProviderScope;
-import 'package:saviour/features/login.dart';
+import 'package:saviour/features/auth/login.dart';
 import 'package:saviour/platform_widgets/platform_app.dart';
 
 void main() {
