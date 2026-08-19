@@ -125,7 +125,6 @@ class PlatformPageRoute<T> extends PageRoute<T> {
     super.requestFocus,
     super.fullscreenDialog,
     super.allowSnapshotting = true,
-    super.barrierDismissible = false,
     super.traversalEdgeBehavior,
     super.directionalTraversalEdgeBehavior,
   });

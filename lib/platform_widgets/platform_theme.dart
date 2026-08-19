@@ -176,10 +176,9 @@ class PlatformTextStyles {
 
     TextStyle style(double size) => TextStyle(
       fontFamily: family,
-      fontFamilyFallback: fallback,
       color: onSurface,
       fontSize: size,
-    );
+    ).copyWith(fontFamilyFallback: fallback);
 
     return PlatformTextStyles._(
       headlineMedium: style(28),
