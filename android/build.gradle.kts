@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+
 allprojects {
     repositories {
         google()
@@ -17,6 +19,17 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+}
+
+// Keep transitive Android libraries (including the cached jni package) on the
+// NDK already installed for this project. This prevents AGP from selecting or
+// provisioning an older NDK version from a dependency's example configuration.
+subprojects {
+    pluginManager.withPlugin("com.android.library") {
+        extensions.configure<LibraryExtension> {
+            ndkVersion = "30.0.16138531"
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {
