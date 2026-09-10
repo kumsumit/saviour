@@ -6,6 +6,7 @@ import 'package:saviour/platform_widgets/platform_app.dart';
 import 'package:saviour/src/rust/frb_generated.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await RustLib.init();
   runApp(const ProviderScope(child: VitalReserveApp()));
 }

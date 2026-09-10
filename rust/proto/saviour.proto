@@ -1,0 +1,81 @@
+syntax = "proto3";
+package saviour.v1;
+
+enum Operation {
+  OPERATION_UNSPECIFIED = 0;
+  HEALTH_LIVE = 1;
+  HEALTH_READY = 2;
+  OTP_REQUEST = 10;
+  OTP_VERIFY = 11;
+  DASHBOARD_GET = 20;
+  BLOOD_REQUEST_LIST = 30;
+  BLOOD_REQUEST_CREATE = 31;
+  BLOOD_REQUEST_RESPOND = 32;
+  CAMP_LIST = 40;
+  CAMP_RESERVE = 41;
+  PROFILE_GET = 50;
+  PROFILE_UPDATE = 51;
+  NOTIFICATION_LIST = 60;
+}
+
+enum Status { STATUS_UNSPECIFIED = 0; OK = 1; ERROR = 2; }
+
+message Request {
+  uint32 protocol_version = 1;
+  string request_id = 2;
+  Operation operation = 3;
+  string tenant_id = 4;
+  string access_token = 5;
+  oneof payload {
+    Empty empty = 10;
+    OtpRequest otp_request = 11;
+    OtpVerify otp_verify = 12;
+    BloodRequestList blood_request_list = 13;
+    BloodRequestCreate blood_request_create = 14;
+    IdRequest id_request = 15;
+    ProfileUpdate profile_update = 16;
+  }
+}
+
+message Response {
+  uint32 protocol_version = 1;
+  string request_id = 2;
+  Operation operation = 3;
+  Status status = 4;
+  oneof payload {
+    Error error = 10;
+    Health health = 11;
+    OtpRequested otp_requested = 12;
+    OtpVerified otp_verified = 13;
+    Dashboard dashboard = 14;
+    BloodRequestPage blood_request_page = 15;
+    BloodRequest blood_request = 16;
+    ActionResult action_result = 17;
+    CampList camp_list = 18;
+    Reservation reservation = 19;
+    UserProfile user_profile = 20;
+    NotificationList notification_list = 21;
+  }
+}
+
+message Empty {}
+message Error { string code = 1; string message = 2; }
+message Health { string status = 1; string service = 2; string time = 3; }
+message OtpRequest { string phone = 1; }
+message OtpVerify { string challenge_id = 1; string code = 2; }
+message OtpRequested { string challenge_id = 1; uint32 expires_in = 2; optional string development_code = 3; }
+message OtpVerified { string access_token = 1; string token_type = 2; uint64 expires_in = 3; UserProfile user = 4; }
+message BloodRequestList { bool urgent_only = 1; string query = 2; uint32 limit = 3; uint32 offset = 4; }
+message BloodRequestCreate { string patient_name = 1; string hospital = 2; string contact_phone = 3; string blood_group = 4; string component = 5; uint32 units = 6; optional bool urgent = 7; }
+message IdRequest { string id = 1; }
+message ProfileUpdate { optional string name = 1; optional string blood_group = 2; optional bool available = 3; }
+message UserProfile { string id = 1; string phone = 2; optional string name = 3; optional string blood_group = 4; bool available = 5; bool verified = 6; int32 donation_count = 7; double litres_donated = 8; int32 lives_helped = 9; optional string eligible_on = 10; }
+message BloodRequest { string id = 1; string patient_name = 2; string hospital = 3; string contact_phone = 4; string blood_group = 5; string component = 6; uint32 units = 7; bool urgent = 8; string status = 9; string created_at = 10; }
+message Camp { string id = 1; string title = 2; string location = 3; string starts_at = 4; string ends_at = 5; int32 available_slots = 6; bool verified = 7; }
+message Notification { string id = 1; string title = 2; string body = 3; bool read = 4; string created_at = 5; }
+message Dashboard { UserProfile profile = 1; repeated BloodRequest urgent_requests = 2; repeated Camp upcoming_camps = 3; uint32 unread_notifications = 4; }
+message BloodRequestPage { repeated BloodRequest items = 1; uint64 total = 2; uint32 limit = 3; uint32 offset = 4; }
+message CampList { repeated Camp items = 1; uint64 total = 2; }
+message NotificationList { repeated Notification items = 1; uint64 total = 2; }
+message ActionResult { string id = 1; string status = 2; }
+message Reservation { string id = 1; string camp_id = 2; string status = 3; }

@@ -1,76 +1,101 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
 import 'package:saviour/services/saviour_api.dart';
 
 void main() {
-  test('requests and verifies an OTP through the companion API', () async {
-    final calls = <String>[];
-    final client = MockClient((request) async {
-      calls.add('${request.method} ${request.url.path}');
-      if (request.url.path.endsWith('/request')) {
-        expect(jsonDecode(request.body)['phone'], '+919876543210');
-        return http.Response(
-          jsonEncode({
-            'challengeId': 'otp_test',
-            'expiresIn': 300,
-            'demoCode': '123456',
-          }),
-          201,
-          headers: {'content-type': 'application/json; charset=utf-8'},
-        );
-      }
-      expect(jsonDecode(request.body), {
-        'challengeId': 'otp_test',
-        'code': '123456',
-      });
-      return http.Response(
-        jsonEncode({
-          'accessToken': 'session_test',
-          'user': {'id': 'user_demo', 'bloodGroup': 'O−'},
-        }),
-        200,
-        headers: {'content-type': 'application/json; charset=utf-8'},
+  test(
+    'OTP, authenticated operations and optional false match server schema',
+    () async {
+      final calls = <Map<String, Object?>>[];
+      final api = SaviourApi(
+        transport: (request) async {
+          calls.add(request);
+          final payload = switch (request['operation']) {
+            'OTP_REQUEST' => {
+              'otpRequested': {
+                'challengeId': 'challenge',
+                'expiresIn': 300,
+                'developmentCode': '123456',
+              },
+            },
+            'OTP_VERIFY' => {
+              'otpVerified': {
+                'accessToken': 'session',
+                'user': {'id': 'user', 'available': true},
+              },
+            },
+            'PROFILE_UPDATE' => {
+              'userProfile': {'id': 'user', 'available': false},
+            },
+            'BLOOD_REQUEST_CREATE' => {
+              'bloodRequest': {'id': 'request'},
+            },
+            _ => <String, Object?>{},
+          };
+          return {
+            'protocolVersion': 1,
+            'requestId': request['requestId'],
+            'operation': request['operation'],
+            'status': 'OK',
+            ...payload,
+          };
+        },
       );
-    });
+      final challenge = await api.requestOtp('+919876543210');
+      expect(challenge.demoCode, '123456');
+      expect(calls.single['otpRequest'], {'phone': '+919876543210'});
+      await api.verifyOtp(challengeId: challenge.id, code: '123456');
+      await api.setAvailability(false);
+      expect(calls.last['accessToken'], 'session');
+      expect(calls.last['profileUpdate'], {'available': false});
+      await api.createRequest(
+        patientName: 'Patient',
+        hospital: 'Hospital',
+        contactPhone: '+919876543210',
+        bloodGroup: 'O−',
+        urgent: false,
+        units: 2,
+      );
+      expect((calls.last['bloodRequestCreate'] as Map)['bloodGroup'], 'O-');
+      expect((calls.last['bloodRequestCreate'] as Map)['units'], 2);
+      api.signOut();
+      expect(api.isAuthenticated, false);
+      await expectLater(
+        api.reserveCamp('camp'),
+        throwsA(isA<SaviourApiException>()),
+      );
+    },
+  );
+  test('server errors are surfaced', () async {
     final api = SaviourApi(
-      client: client,
-      baseUri: Uri.parse('http://localhost:8080'),
+      transport: (r) async => {
+        'protocolVersion': 1,
+        'requestId': r['requestId'],
+        'operation': r['operation'],
+        'status': 'ERROR',
+        'error': {'code': 'invalid_code', 'message': 'Code is incorrect.'},
+      },
     );
-
-    final challenge = await api.requestOtp('+919876543210');
-    final user = await api.verifyOtp(challengeId: challenge.id, code: '123456');
-
-    expect(challenge.demoCode, '123456');
-    expect(user['bloodGroup'], 'O−');
-    expect(api.isAuthenticated, isTrue);
-    expect(calls, ['POST /v1/auth/otp/request', 'POST /v1/auth/otp/verify']);
-  });
-
-  test('surfaces server problem messages', () async {
-    final api = SaviourApi(
-      client: MockClient(
-        (_) async => http.Response(
-          jsonEncode({
-            'error': {'code': 'invalid_code', 'message': 'Code is incorrect.'},
-          }),
-          401,
-        ),
-      ),
-      baseUri: Uri.parse('http://localhost:8080'),
-    );
-
-    expect(
-      () => api.verifyOtp(challengeId: 'otp_test', code: '000000'),
+    await expectLater(
+      api.verifyOtp(challengeId: 'x', code: '000000'),
       throwsA(
         isA<SaviourApiException>().having(
-          (error) => error.message,
+          (e) => e.message,
           'message',
           'Code is incorrect.',
         ),
       ),
     );
+  });
+  test('rejects uncorrelated server responses', () async {
+    final api = SaviourApi(
+      transport: (r) async => {
+        'protocolVersion': 1,
+        'requestId': 'wrong',
+        'operation': r['operation'],
+        'status': 'OK',
+        'health': {},
+      },
+    );
+    await expectLater(api.health(), throwsA(isA<SaviourApiException>()));
   });
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:saviour/features/auth/login.dart';
-import 'package:saviour/features/home/donar_profile.dart' as donor_profile;
 import 'package:saviour/features/home/donation_history.dart' as history;
 import 'package:saviour/features/home/elligibility_tracker.dart' as eligibility;
 import 'package:saviour/features/home/emergency_sos.dart' as emergency;
@@ -37,7 +36,24 @@ class SaviourHomeShell extends ConsumerStatefulWidget {
 
 class _SaviourHomeShellState extends ConsumerState<SaviourHomeShell> {
   late int _index = widget.initialIndex.clamp(0, 3);
-  bool _available = true;
+  bool _available =
+      SaviourApi.instance.currentUser?['available'] as bool? ?? false;
+
+  @override
+  void initState() {
+    super.initState();
+    SaviourApi.instance.revision.addListener(_updated);
+  }
+
+  void _updated() => setState(() {
+    _available =
+        SaviourApi.instance.currentUser?['available'] as bool? ?? false;
+  });
+  @override
+  void dispose() {
+    SaviourApi.instance.revision.removeListener(_updated);
+    super.dispose();
+  }
 
   static const _items = [
     PlatformNavigationItem(
@@ -169,131 +185,56 @@ class _DashboardPage extends ConsumerWidget {
     required this.onOpenCamps,
     required this.onNotifications,
   });
-
-  final VoidCallback onCreateRequest;
-  final VoidCallback onOpenRequests;
-  final VoidCallback onOpenCamps;
-  final VoidCallback onNotifications;
-
+  final VoidCallback onCreateRequest,
+      onOpenRequests,
+      onOpenCamps,
+      onNotifications;
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = context.platformTheme;
-    return _PageScroll(
-      child: Column(
+  Widget build(BuildContext context, WidgetRef ref) => _ServerView(
+    load: SaviourApi.instance.dashboard,
+    builder: (data) {
+      final profile = data['profile'] as Map;
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _PageHeader(
-            eyebrow: 'THURSDAY, 6 AUGUST',
-            title: 'Good morning, Sarah',
-            subtitle: 'Your next eligible donation is in 12 days.',
-            action: PlatformBadge(
-              label: const Text('3'),
-              severity: PlatformBadgeSeverity.error,
-              child: PlatformIconButton(
-                icon: Icons.notifications_none,
-                tooltip: 'Notifications',
-                onPressed: onNotifications,
-              ),
+            eyebrow: 'SAVIOUR',
+            title: 'Welcome, ${profile['name'] ?? profile['phone']}',
+            subtitle: 'Your donation network',
+            action: PlatformIconButton(
+              icon: Icons.notifications_none,
+              tooltip: 'Notifications (${data['unreadNotifications']})',
+              onPressed: onNotifications,
             ),
           ),
           const SizedBox(height: 24),
           _EmergencyCard(onPressed: onCreateRequest),
-          const SizedBox(height: 30),
+          const SizedBox(height: 24),
           _SectionHeader(
-            title: 'Urgent requests nearby',
+            title: 'Urgent requests',
             actionLabel: 'View all',
             onPressed: onOpenRequests,
           ),
-          const SizedBox(height: 12),
-          const _RequestCard(
-            bloodGroup: 'O−',
-            hospital: 'City General Hospital',
-            detail: 'Whole blood • 1.2 km',
-            units: 2,
-            urgent: true,
-          ),
-          const SizedBox(height: 10),
-          const _RequestCard(
-            bloodGroup: 'A+',
-            hospital: 'Hope Medical Centre',
-            detail: 'Platelets • 3.8 km',
-            units: 1,
-          ),
-          const SizedBox(height: 30),
+          for (final item in data['urgentRequests'] as List? ?? [])
+            _serverRequestCard(item as Map),
+          if ((data['urgentRequests'] as List? ?? []).isEmpty)
+            const Text('No urgent requests.'),
+          const SizedBox(height: 24),
           _SectionHeader(
-            title: 'Your impact',
-            actionLabel: 'Donation history',
-            onPressed: () => _message(
-              context,
-              ref,
-              'Your full donation history is ready in Profile.',
-            ),
-          ),
-          const SizedBox(height: 12),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final compact = constraints.maxWidth < 560;
-              final cards = [
-                _ImpactCard(
-                  icon: Icons.favorite,
-                  value: '12',
-                  label: 'Lives helped',
-                  color: theme.primary,
-                ),
-                _ImpactCard(
-                  icon: Icons.water_drop,
-                  value: '4.8 L',
-                  label: 'Blood donated',
-                  color: theme.accent(4),
-                ),
-                _ImpactCard(
-                  icon: Icons.military_tech,
-                  value: 'Gold',
-                  label: 'Donor status',
-                  color: theme.warning,
-                ),
-              ];
-              return compact
-                  ? Column(
-                      children: [
-                        for (final card in cards)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: card,
-                          ),
-                      ],
-                    )
-                  : Row(
-                      children: [
-                        for (final card in cards)
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: card,
-                            ),
-                          ),
-                      ],
-                    );
-            },
-          ),
-          const SizedBox(height: 30),
-          _SectionHeader(
-            title: 'Next camp near you',
-            actionLabel: 'Explore camps',
+            title: 'Upcoming camps',
+            actionLabel: 'View all',
             onPressed: onOpenCamps,
           ),
-          const SizedBox(height: 12),
-          _CampCard(
-            title: 'Community Life Drive',
-            location: 'Downtown Community Hall • 2.1 km',
-            date: 'SAT, 8 AUG',
-            time: '9:00 AM – 4:00 PM',
-            onRegister: () => _register(context, ref, 'Community Life Drive'),
+          for (final item in data['upcomingCamps'] as List? ?? [])
+            _serverCampCard(context, ref, item as Map),
+          const SizedBox(height: 24),
+          Text(
+            'Donations: ${profile['donationCount']} • Litres donated: ${profile['litresDonated']} • Lives helped: ${profile['livesHelped']}',
           ),
         ],
-      ),
-    );
-  }
+      );
+    },
+  );
 }
 
 class _EmergencyCard extends StatelessWidget {
@@ -376,23 +317,14 @@ class _EmergencyCard extends StatelessWidget {
 class _RequestsPage extends StatefulWidget {
   const _RequestsPage({required this.onCreateRequest});
   final VoidCallback onCreateRequest;
-
   @override
   State<_RequestsPage> createState() => _RequestsPageState();
 }
 
 class _RequestsPageState extends State<_RequestsPage> {
   final _search = TextEditingController();
-  String _filter = 'nearby';
+  bool _urgent = false;
   String _query = '';
-
-  static const _requests = [
-    ('O−', 'City General Hospital', 'Whole blood • 1.2 km', 2, true),
-    ('A+', 'Hope Medical Centre', 'Platelets • 3.8 km', 1, false),
-    ('B−', 'Mercy Children’s Wing', 'Whole blood • 5.4 km', 3, true),
-    ('AB+', 'St. Anne’s Hospital', 'Plasma • 7.1 km', 1, false),
-  ];
-
   @override
   void dispose() {
     _search.dispose();
@@ -400,76 +332,87 @@ class _RequestsPageState extends State<_RequestsPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final visible = _requests.where((item) {
-      final haystack = '${item.$1} ${item.$2} ${item.$3}'.toLowerCase();
-      return haystack.contains(_query.toLowerCase()) &&
-          (_filter != 'urgent' || item.$5);
-    }).toList();
-    return _PageScroll(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _PageHeader(
-            eyebrow: 'LIVE NETWORK',
-            title: 'Blood requests',
-            subtitle: '${visible.length} verified requests match your view.',
-            action: PlatformButton.icon(
-              icon: Icons.add,
+  Widget build(BuildContext context) => Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            PlatformButton(
               onPressed: widget.onCreateRequest,
-              label: const Text('New request'),
+              child: const Text('New blood request'),
             ),
-          ),
-          const SizedBox(height: 22),
-          PlatformSearchField(
-            controller: _search,
-            placeholder: 'Search hospital, blood group, or location',
-            onChanged: (value) => setState(() => _query = value),
-            onClear: () => setState(() => _query = ''),
-          ),
-          const SizedBox(height: 14),
-          PlatformSegmentedControl<String>(
-            segments: const [
-              PlatformSegment(value: 'nearby', label: 'Nearby'),
-              PlatformSegment(value: 'urgent', label: 'Urgent'),
-              PlatformSegment(value: 'all', label: 'All'),
-            ],
-            value: _filter,
-            onChanged: (value) => setState(() => _filter = value),
-          ),
-          const SizedBox(height: 22),
-          if (visible.isEmpty)
-            const _EmptyState(
-              icon: Icons.search_off,
-              title: 'No matching requests',
-              message: 'Try a different hospital, blood group, or filter.',
-            )
-          else
-            for (final item in visible) ...[
-              _RequestCard(
-                bloodGroup: item.$1,
-                hospital: item.$2,
-                detail: item.$3,
-                units: item.$4,
-                urgent: item.$5,
-              ),
-              const SizedBox(height: 10),
-            ],
-        ],
+            PlatformSearchField(
+              controller: _search,
+              placeholder: 'Search hospital or blood group',
+              onChanged: (v) => setState(() => _query = v),
+              onClear: () => setState(() => _query = ''),
+            ),
+            Row(
+              children: [
+                const Text('Urgent only'),
+                PlatformSwitch(
+                  value: _urgent,
+                  onChanged: (v) => setState(() => _urgent = v),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    );
-  }
+      Expanded(
+        child: _ServerView(
+          key: ValueKey('$_query/$_urgent'),
+          load: () async {
+            final items = <Map<String, Object?>>[];
+            while (true) {
+              final page = await SaviourApi.instance.requests(
+                query: _query,
+                urgentOnly: _urgent,
+                offset: items.length,
+              );
+              items.addAll(page);
+              if (page.length < 50) break;
+            }
+            return {'items': items};
+          },
+          builder: (data) => Column(
+            children: [
+              if ((data['items'] as List).isEmpty)
+                const Text('No matching requests.'),
+              for (final item in data['items'] as List)
+                _serverRequestCard(item as Map),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
 }
+
+Widget _serverRequestCard(Map item) => Padding(
+  padding: const EdgeInsets.only(bottom: 12),
+  child: _RequestCard(
+    id: item['id'] as String,
+    bloodGroup: item['bloodGroup'] as String,
+    hospital: item['hospital'] as String,
+    detail: item['component'] as String,
+    units: item['units'] as int,
+    urgent: item['urgent'] as bool,
+  ),
+);
 
 class _RequestCard extends ConsumerWidget {
   const _RequestCard({
     required this.bloodGroup,
+    required this.id,
     required this.hospital,
     required this.detail,
     required this.units,
     this.urgent = false,
   });
 
+  final String id;
   final String bloodGroup;
   final String hospital;
   final String detail;
@@ -546,10 +489,11 @@ class _RequestCard extends ConsumerWidget {
                 PlatformDialogAction(
                   label: 'I can donate',
                   isDefault: true,
-                  onPressed: () => _message(
+                  onPressed: () => _serverAction(
                     context,
                     ref,
-                    'Thank you. The hospital coordinator has been notified.',
+                    () => SaviourApi.instance.respondToRequest(id),
+                    'Your response has been recorded.',
                   ),
                 ),
               ],
@@ -562,79 +506,50 @@ class _RequestCard extends ConsumerWidget {
   }
 }
 
-class _CampsPage extends ConsumerStatefulWidget {
+class _CampsPage extends ConsumerWidget {
   const _CampsPage();
-
   @override
-  ConsumerState<_CampsPage> createState() => _CampsPageState();
+  Widget build(BuildContext context, WidgetRef ref) => _ServerView(
+    load: () async => {'items': await SaviourApi.instance.camps()},
+    builder: (data) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text('Donation camps'),
+        if ((data['items'] as List).isEmpty) const Text('No upcoming camps.'),
+        for (final item in data['items'] as List)
+          _serverCampCard(context, ref, item as Map),
+      ],
+    ),
+  );
 }
 
-class _CampsPageState extends ConsumerState<_CampsPage> {
-  final _search = TextEditingController();
-  String _query = '';
-
-  @override
-  void dispose() {
-    _search.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const camps = [
-      (
-        'Community Life Drive',
-        'Downtown Community Hall • 2.1 km',
-        'SAT, 8 AUG',
-        '9:00 AM – 4:00 PM',
-      ),
-      (
-        'Tech Park Donor Day',
-        'Innovation Campus • 4.6 km',
-        'TUE, 11 AUG',
-        '10:00 AM – 5:00 PM',
-      ),
-      (
-        'Red Cross Weekend Camp',
-        'Civic Centre • 6.2 km',
-        'SUN, 16 AUG',
-        '8:30 AM – 3:00 PM',
-      ),
-    ];
-    final visible = camps.where(
-      (camp) =>
-          '${camp.$1} ${camp.$2}'.toLowerCase().contains(_query.toLowerCase()),
-    );
-    return _PageScroll(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const _PageHeader(
-            eyebrow: 'DONATE SAFELY',
-            title: 'Camps near you',
-            subtitle: 'Verified venues with screened medical teams.',
-          ),
-          const SizedBox(height: 22),
-          PlatformSearchField(
-            controller: _search,
-            placeholder: 'Search camps or locations',
-            onChanged: (value) => setState(() => _query = value),
-            onClear: () => setState(() => _query = ''),
-          ),
-          const SizedBox(height: 22),
-          for (final camp in visible) ...[
-            _CampCard(
-              title: camp.$1,
-              location: camp.$2,
-              date: camp.$3,
-              time: camp.$4,
-              onRegister: () => _register(context, ref, camp.$1),
-            ),
-            const SizedBox(height: 12),
-          ],
-        ],
+Widget _serverCampCard(BuildContext context, WidgetRef ref, Map item) =>
+    Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: _CampCard(
+        title: item['title'] as String,
+        location: item['location'] as String,
+        date: (item['startsAt'] as String),
+        time: '${item['availableSlots']} slots available',
+        onRegister: () => _serverAction(
+          context,
+          ref,
+          () => SaviourApi.instance.reserveCamp(item['id'] as String),
+          'Your reservation is confirmed.',
+        ),
       ),
     );
+Future<void> _serverAction(
+  BuildContext context,
+  WidgetRef ref,
+  Future<void> Function() action,
+  String success,
+) async {
+  try {
+    await action();
+    if (context.mounted) _message(context, ref, success);
+  } on SaviourApiException catch (error) {
+    if (context.mounted) _message(context, ref, error.message);
   }
 }
 
@@ -738,10 +653,12 @@ class _ProfilePage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _PageHeader(
-            eyebrow: 'VERIFIED DONOR',
-            title: 'Sarah Mitchell',
-            subtitle: 'O− • Gold donor • Member since 2022',
+          _PageHeader(
+            eyebrow: 'DONOR PROFILE',
+            title:
+                '${SaviourApi.instance.currentUser?['name'] ?? SaviourApi.instance.currentUser?['phone'] ?? 'Your profile'}',
+            subtitle:
+                '${SaviourApi.instance.currentUser?['bloodGroup'] ?? 'Blood group not set'}',
           ),
           const SizedBox(height: 22),
           PlatformCard(
@@ -757,7 +674,7 @@ class _ProfilePage extends ConsumerWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Text(
-                    'SM',
+                    '${SaviourApi.instance.currentUser?['donationCount'] ?? 0}',
                     style: theme.text.titleLarge?.copyWith(
                       color: theme.primary,
                       fontWeight: FontWeight.w800,
@@ -802,7 +719,9 @@ class _ProfilePage extends ConsumerWidget {
               children: [
                 PlatformListTile(
                   title: const Text('Eligibility tracker'),
-                  subtitle: const Text('12 days until next donation'),
+                  subtitle: Text(
+                    '${SaviourApi.instance.currentUser?['eligibleOn'] ?? 'Eligibility not recorded'}',
+                  ),
                   leading: const Icon(Icons.fact_check_outlined),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => open(const eligibility.EligibilityScreen()),
@@ -810,7 +729,9 @@ class _ProfilePage extends ConsumerWidget {
                 const PlatformDivider(indent: 56),
                 PlatformListTile(
                   title: const Text('Donation history'),
-                  subtitle: const Text('42 verified donations'),
+                  subtitle: Text(
+                    '${SaviourApi.instance.currentUser?['donationCount'] ?? 0} donations',
+                  ),
                   leading: const Icon(Icons.history),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => open(const history.HomeScreen()),
@@ -837,8 +758,11 @@ class _ProfilePage extends ConsumerWidget {
                   title: const Text('Personal and medical details'),
                   leading: const Icon(Icons.badge_outlined),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () =>
-                      open(const donor_profile.CompleteProfileScreen()),
+                  onTap: () => showPlatformSheet<void>(
+                    context: context,
+                    platform: ref.read(appPlatformProvider),
+                    builder: (_) => const _EditProfileSheet(),
+                  ),
                 ),
                 const PlatformDivider(indent: 56),
                 PlatformListTile(
@@ -918,6 +842,7 @@ class _CreateBloodRequestSheetState
   String _bloodGroup = 'O+';
   String _urgency = 'urgent';
   int _step = 0;
+  bool _submitting = false;
 
   @override
   void dispose() {
@@ -1038,7 +963,7 @@ class _CreateBloodRequestSheetState
                 ],
                 Expanded(
                   child: PlatformButton(
-                    onPressed: _next,
+                    onPressed: _submitting ? null : _next,
                     child: Text(
                       _step == 0 ? 'Review request' : 'Broadcast request',
                     ),
@@ -1053,6 +978,7 @@ class _CreateBloodRequestSheetState
   }
 
   Future<void> _next() async {
+    if (_submitting) return;
     if (_step == 0) {
       if (_patient.text.trim().isEmpty ||
           _hospital.text.trim().isEmpty ||
@@ -1067,6 +993,7 @@ class _CreateBloodRequestSheetState
       setState(() => _step = 1);
       return;
     }
+    setState(() => _submitting = true);
     try {
       await SaviourApi.instance.createRequest(
         patientName: _patient.text.trim(),
@@ -1077,60 +1004,83 @@ class _CreateBloodRequestSheetState
       );
       if (!mounted) return;
       Navigator.pop(context);
-      _message(
-        context,
-        ref,
-        'Request broadcast. Compatible verified donors are being notified.',
-      );
+      _message(context, ref, 'Your blood request has been created.');
     } on SaviourApiException catch (error) {
       if (mounted) _message(context, ref, error.message);
+    } finally {
+      if (mounted) setState(() => _submitting = false);
     }
   }
 }
 
 class NotificationsPanel extends StatelessWidget {
   const NotificationsPanel({super.key});
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 440,
+    child: _ServerView(
+      load: () async => {'items': await SaviourApi.instance.notifications()},
+      builder: (data) => Column(
+        children: [
+          const Text('Notifications'),
+          if ((data['items'] as List).isEmpty) const Text('No notifications.'),
+          for (final item in data['items'] as List)
+            PlatformListTile(
+              title: Text(item['title'] as String),
+              subtitle: Text(item['body'] as String),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _ServerView extends StatefulWidget {
+  const _ServerView({super.key, required this.load, required this.builder});
+  final Future<Map<String, Object?>> Function() load;
+  final Widget Function(Map<String, Object?>) builder;
+  @override
+  State<_ServerView> createState() => _ServerViewState();
+}
+
+class _ServerViewState extends State<_ServerView> {
+  late Future<Map<String, Object?>> _data = widget.load();
+  @override
+  void initState() {
+    super.initState();
+    SaviourApi.instance.revision.addListener(_reload);
+  }
+
+  void _reload() => setState(() => _data = widget.load());
+  @override
+  void dispose() {
+    SaviourApi.instance.revision.removeListener(_reload);
+    super.dispose();
+  }
 
   @override
-  Widget build(BuildContext context) {
-    final theme = context.platformTheme;
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 560),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text('Notifications', style: theme.text.titleLarge),
-            const SizedBox(height: 14),
-            const PlatformListTile(
-              title: Text('O− request 1.2 km away'),
-              subtitle: Text('City General Hospital • 4 min ago'),
-              leading: Icon(Icons.bloodtype),
-            ),
-            const PlatformDivider(indent: 52),
-            const PlatformListTile(
-              title: Text('Camp reminder'),
-              subtitle: Text('Community Life Drive starts Saturday'),
-              leading: Icon(Icons.calendar_today_outlined),
-            ),
-            const PlatformDivider(indent: 52),
-            const PlatformListTile(
-              title: Text('You helped save a life'),
-              subtitle: Text('Your last donation has been verified'),
-              leading: Icon(Icons.favorite_outline),
-            ),
-            const SizedBox(height: 14),
-            PlatformButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Done'),
-            ),
-          ],
+  Widget build(BuildContext context) => _PageScroll(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        PlatformButton(
+          onPressed: () => setState(() => _data = widget.load()),
+          child: const Text('Refresh'),
         ),
-      ),
-    );
-  }
+        const SizedBox(height: 16),
+        FutureBuilder<Map<String, Object?>>(
+          future: _data,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Text('Loading…');
+            }
+            if (snapshot.hasError) return Text('${snapshot.error}');
+            return widget.builder(snapshot.requireData);
+          },
+        ),
+      ],
+    ),
+  );
 }
 
 class _PageScroll extends StatelessWidget {
@@ -1244,50 +1194,6 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _ImpactCard extends StatelessWidget {
-  const _ImpactCard({
-    required this.icon,
-    required this.value,
-    required this.label,
-    required this.color,
-  });
-  final IconData icon;
-  final String value;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.platformTheme;
-    return PlatformCard(
-      padding: const EdgeInsets.all(17),
-      child: Row(
-        children: [
-          Icon(icon, color: color),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: theme.text.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              Text(
-                label,
-                style: theme.text.bodySmall?.copyWith(
-                  color: theme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _IconLabel extends StatelessWidget {
   const _IconLabel({required this.icon, required this.label});
   final IconData icon;
@@ -1340,40 +1246,6 @@ class _SummaryRow extends StatelessWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  const _EmptyState({
-    required this.icon,
-    required this.title,
-    required this.message,
-  });
-  final IconData icon;
-  final String title;
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.platformTheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 56),
-      child: Column(
-        children: [
-          Icon(icon, size: 44, color: theme.onSurfaceVariant),
-          const SizedBox(height: 14),
-          Text(title, style: theme.text.titleMedium),
-          const SizedBox(height: 6),
-          Text(
-            message,
-            style: theme.text.bodyMedium?.copyWith(
-              color: theme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 void _message(BuildContext context, WidgetRef ref, String message) =>
     showPlatformSnackbar(
       context: context,
@@ -1381,23 +1253,63 @@ void _message(BuildContext context, WidgetRef ref, String message) =>
       message: message,
     );
 
-Future<void> _register(BuildContext context, WidgetRef ref, String camp) =>
-    showPlatformDialog(
-      context: context,
-      platform: ref.read(appPlatformProvider),
-      title: 'Reserve your slot?',
-      message:
-          '$camp will receive your donor profile and preferred contact number.',
-      actions: [
-        const PlatformDialogAction(label: 'Cancel'),
-        PlatformDialogAction(
-          label: 'Reserve',
-          isDefault: true,
-          onPressed: () => _message(
-            context,
-            ref,
-            'Your slot is reserved. We’ll remind you one day before.',
-          ),
+class _EditProfileSheet extends ConsumerStatefulWidget {
+  const _EditProfileSheet();
+  @override
+  ConsumerState<_EditProfileSheet> createState() => _EditProfileSheetState();
+}
+
+class _EditProfileSheetState extends ConsumerState<_EditProfileSheet> {
+  final _name = TextEditingController(
+    text: SaviourApi.instance.currentUser?['name'] as String?,
+  );
+  final _group = TextEditingController(
+    text: SaviourApi.instance.currentUser?['bloodGroup'] as String?,
+  );
+  bool _saving = false;
+  @override
+  void dispose() {
+    _name.dispose();
+    _group.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(24),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Edit donor profile'),
+        PlatformTextField(controller: _name, placeholder: 'Full name'),
+        const SizedBox(height: 12),
+        PlatformTextField(
+          controller: _group,
+          placeholder: 'Blood group (e.g. O+)',
+        ),
+        const SizedBox(height: 16),
+        PlatformButton(
+          onPressed: _saving
+              ? null
+              : () async {
+                  setState(() => _saving = true);
+                  try {
+                    await SaviourApi.instance.updateProfile(
+                      name: _name.text.trim(),
+                      bloodGroup: _group.text.trim(),
+                    );
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  } on SaviourApiException catch (error) {
+                    if (context.mounted) _message(context, ref, error.message);
+                  } finally {
+                    if (mounted) setState(() => _saving = false);
+                  }
+                },
+          child: Text(_saving ? 'Saving…' : 'Save profile'),
         ),
       ],
-    );
+    ),
+  );
+}

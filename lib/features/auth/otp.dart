@@ -43,6 +43,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
   final _timerController = PlatformOtpTimerButtonController();
   String _code = '';
   late String _challengeId = widget.challengeId;
+  late String? _demoCode = widget.demoCode;
   bool _verifying = false;
 
   Future<void> _verify() async {
@@ -88,6 +89,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       );
       if (!mounted) return;
       _challengeId = challenge.id;
+      setState(() => _demoCode = challenge.demoCode);
       _otpKey.currentState?.clear();
       setState(() => _code = '');
       _timerController.startTimer();
@@ -237,9 +239,9 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              widget.demoCode == null
+                              _demoCode == null
                                   ? 'The code expires shortly. Never share it with another person.'
-                                  : 'Local development code: ${widget.demoCode}',
+                                  : 'Local development code: $_demoCode',
                               style: theme.text.bodyMedium?.copyWith(
                                 height: 1.45,
                               ),

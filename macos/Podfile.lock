@@ -1,0 +1,28 @@
+PODS:
+  - catcher (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+  - rust_lib_saviour (0.0.1):
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - catcher (from `Flutter/ephemeral/.symlinks/plugins/catcher/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - rust_lib_saviour (from `Flutter/ephemeral/.symlinks/plugins/rust_lib_saviour/macos`)
+
+EXTERNAL SOURCES:
+  catcher:
+    :path: Flutter/ephemeral/.symlinks/plugins/catcher/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  rust_lib_saviour:
+    :path: Flutter/ephemeral/.symlinks/plugins/rust_lib_saviour/macos
+
+SPEC CHECKSUMS:
+  catcher: fc7d6d9bbb6e146ff23d625aa88ff8bbf83435d6
+  FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
+  rust_lib_saviour: 64ef24e674b2191cc397023b23892cebde643ef3
+
+PODFILE CHECKSUM: 1e95c36afbfd1cb6423ceca4de7a8e1b256fb6ac
+
+COCOAPODS: 1.17.0
