@@ -33,6 +33,9 @@ dependencies:
 
   catcher:
     git: https://github.com/sumitsharansatsangi/catcher.git  
+  rust_lib_saviour:
+    path: rust_builder
+  flutter_rust_bridge: 2.13.0
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +49,8 @@ dev_dependencies:
     git: https://github.com/kumsumit/riverpod_generator.git
   riverpod_lint:
     git: https://github.com/kumsumit/riverpod_lint.git
+  integration_test:
+    sdk: flutter
 
 dependency_overrides: 
   path_provider:
